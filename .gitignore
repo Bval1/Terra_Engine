@@ -1,3 +1,16 @@
+# Directories
+.vs/
+x64/
+x86/
+Terra/x64/Debug
+Sandbox/x64/Debug
+
+# Files
+*.user
+*.json
+*.dds
+*.cso
+
 # Prerequisites
 *.d
 
