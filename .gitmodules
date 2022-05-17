@@ -1,0 +1,9 @@
+[submodule "Terra/vendor/spdlog"]
+	path = Terra/vendor/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "Terra/vendor/imgui"]
+	path = Terra/vendor/imgui
+	url = https://github.com/ocornut/imgui
+[submodule "Terra/vendor/assimp"]
+	path = Terra/vendor/assimp
+	url = https://github.com/assimp/assimp.git
