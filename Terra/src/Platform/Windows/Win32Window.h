@@ -26,11 +26,11 @@ namespace Terra
 	{
 		friend class WindowClass;
 	public:
-		class HrException : public SBException
+		class HrException : public TerraException
 		{
 		public:
 			HrException(int line, const char* file, HRESULT hr)
-				: SBException(line, file), hr(hr) {}
+				: TerraException(line, file), hr(hr) {}
 			
 			const char* what() const noexcept override;
 			static std::string TranslateErrorCode(HRESULT hr) noexcept;
@@ -41,10 +41,10 @@ namespace Terra
 		private:
 			HRESULT hr;
 		};
-		class NoGfxException : public SBException
+		class NoGfxException : public TerraException
 		{
 		public:
-			using SBException::SBException;
+			using TerraException::TerraException;
 			const char* GetType() const noexcept override { return "Window Exception [No Graphics]"; }
 		};
 	public:

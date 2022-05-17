@@ -29,7 +29,7 @@ void Terra::DirectXVertexArray::Unbind() const
 void Terra::DirectXVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 {
 	INFOMAN(*DirectXRendererAPI::GetDXGraphicsContext());
-	SB_PROFILE_FUNCTION();
+	TERRA_PROFILE_FUNCTION();
 	//vertexBuffer->Bind();  // do this before when binding VA, right before the draw call 
 	//m_VertexBuffers.push_back(vertexBuffer);
 	m_VertexBuffer = vertexBuffer;
@@ -83,7 +83,7 @@ DXGI_FORMAT Terra::DirectXVertexArray::ShaderDataTypeToDXGIFormat(ShaderDataType
 	case Terra::ShaderDataType::Bool:	return DXGI_FORMAT_R8_UINT;
 	}
 
-	SB_CORE_ASSERT(false, "Unknown ShaderDataType!");
+	TERRA_CORE_ASSERT(false, "Unknown ShaderDataType!");
 	return DXGI_FORMAT_UNKNOWN;
 }
 

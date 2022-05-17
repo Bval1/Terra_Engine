@@ -3,10 +3,10 @@
 #include <string>
 namespace Terra
 {
-	class SBException : public std::exception
+	class TerraException : public std::exception
 	{
 	public:
-		SBException(int line, const char* file) noexcept
+		TerraException(int line, const char* file) noexcept
 			: m_Line(line), m_File(file) {}
 
 		const char* what() const noexcept override;

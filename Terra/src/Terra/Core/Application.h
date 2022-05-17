@@ -16,12 +16,12 @@ namespace Terra {
 
 	struct ApplicationCommandLineArgs
 	{
-#if 1
+#ifndef NDEBUG								
 		int Count = 0;
 		char** Args = nullptr;
 		const char* operator[](int index) const
 		{
-			SB_CORE_ASSERT(index < Count);
+			TERRA_CORE_ASSERT(index < Count);
 			return Args[index];
 		}	
 #else

@@ -1,5 +1,5 @@
 #pragma once
-#include "Shinebox/Renderer/Texture.h"
+#include "Terra/Renderer/Texture.h"
 #include "DirectXContext.h"
 #include "Sampler.h"
 namespace Terra
@@ -27,7 +27,7 @@ namespace Terra
 #ifndef  NDEBUG
 			return context.infoManager;
 #else
-			SB_ASSERT("You tried to access infoManager in Release config");
+			TERRA_ASSERT("You tried to access infoManager in Release config");
 #endif
 		}
 

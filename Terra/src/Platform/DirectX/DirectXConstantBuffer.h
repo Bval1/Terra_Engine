@@ -14,7 +14,9 @@ namespace Terra {
 		virtual void Update(const void* data, uint32_t size) override;
 		virtual ConstantBufferType GetType() override { return m_type; }
 	private:
+#ifndef NDEBUG
 		DXGIInfoManager& GetInfoManager(DirectXContext& gfx) { return gfx.infoManager; }
+#endif
 		Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
 		D3D11_BUFFER_DESC m_ConstantBufferDesc;
 		ConstantBufferType m_type;

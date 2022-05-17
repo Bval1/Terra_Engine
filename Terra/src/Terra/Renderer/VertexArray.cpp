@@ -10,11 +10,11 @@ namespace Terra {
 		
 		switch (Renderer::GetAPI())
 		{
-			case RendererAPI::API::None: SB_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::None: TERRA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::DirectX: return std::make_shared<DirectXVertexArray>();  // TODO DX VA
 		}
 
-		SB_CORE_ASSERT(false, "Unknown RendererAPI!");
+		TERRA_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
 }

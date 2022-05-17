@@ -18,7 +18,7 @@ namespace Terra
 		friend class DirectXRendererAPI;
 	public:
 		// for functions that take in an HRESULT
-		class HrException : public SBException
+		class HrException : public TerraException
 		{
 		public:
 			HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs = {}) noexcept;
@@ -31,7 +31,7 @@ namespace Terra
 			HRESULT m_Hr;
 			std::string m_Info;
 		};
-		class InfoException : public SBException
+		class InfoException : public TerraException
 		{
 		public:
 			InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept;

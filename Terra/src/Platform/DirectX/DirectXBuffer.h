@@ -20,7 +20,9 @@ namespace Terra {
 		virtual  const BufferLayout& GetLayout() const override { return m_Layout; };
 		virtual float* GetVertices() const override { return m_vertices; };
 	private:
-		static DXGIInfoManager& GetInfoManager(DirectXContext& gfx) { return gfx.infoManager; }
+#ifndef NDEBUG
+		DXGIInfoManager& GetInfoManager(DirectXContext& gfx) { return gfx.infoManager; }
+#endif 
 	private:
 		float* m_vertices;
 		uint32_t m_size;
@@ -40,7 +42,9 @@ namespace Terra {
 		virtual void Unbind() const override;
 		virtual uint32_t GetCount() const override { return m_Count; }	
 	private:
-		static DXGIInfoManager& GetInfoManager(DirectXContext& gfx) { return gfx.infoManager; }
+#ifndef NDEBUG
+		DXGIInfoManager& GetInfoManager(DirectXContext& gfx) { return gfx.infoManager; }
+#endif 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer;
 		uint32_t m_Count;

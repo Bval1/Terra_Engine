@@ -28,7 +28,7 @@ namespace Terra {
 
 	void ImGuiLayer::OnAttach()
 	{
-		SB_PROFILE_FUNCTION();
+		TERRA_PROFILE_FUNCTION();
 
 		if (RendererAPI::GetAPI() != RendererAPI::API::DirectX) // already set in win32 window class 
 		{
@@ -85,7 +85,7 @@ namespace Terra {
 
 	void ImGuiLayer::OnDetach()
 	{
-		SB_PROFILE_FUNCTION();
+		TERRA_PROFILE_FUNCTION();
 		// Cleanup
 
 		ImGui_ImplDX11_Shutdown();
@@ -96,7 +96,7 @@ namespace Terra {
 
 	void ImGuiLayer::Begin()
 	{
-		SB_PROFILE_FUNCTION();
+		TERRA_PROFILE_FUNCTION();
 		// Start the Dear ImGui frame
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
@@ -107,7 +107,7 @@ namespace Terra {
 
 	void ImGuiLayer::End()
 	{
-		SB_PROFILE_FUNCTION();
+		TERRA_PROFILE_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();

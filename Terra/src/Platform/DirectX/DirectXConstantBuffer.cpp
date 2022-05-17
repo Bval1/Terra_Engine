@@ -40,7 +40,7 @@ void Terra::DirectXConstantBuffer::Bind(uint32_t numBuffers)
 	switch (m_type)
 	{
 	case ConstantBufferType::None:
-		SB_ASSERT("Must select a valid constant buffer type!");
+		TERRA_ASSERT("Must select a valid constant buffer type!");
 		break;
 	case ConstantBufferType::Vertex:
 		DirectXRendererAPI::GetDeviceContext()->VSSetConstantBuffers(m_slot, numBuffers, pConstantBuffer.GetAddressOf());

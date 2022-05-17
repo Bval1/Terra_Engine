@@ -1,17 +1,17 @@
 #include "Terrapch.h"
 #include "DirectXShader.h"
 
-//Microsoft::WRL::ComPtr<ID3DBlob> Terra::DirectXShader::pVSByteCodeBlob = NULL;
+//Microsoft::WRL::ComPtr<ID3DBlob> Terra::DirectXShader::pVTERRAyteCodeBlob = NULL;
 Terra::DirectXShader::DirectXShader(const std::wstring& path, ShaderType shaderType)
 	: m_Path(path), m_Shadertype(shaderType)
 {
-	SB_ASSERT(DirectXRendererAPI::GetDXGraphicsContext(), "Graphics context is null!");
+	TERRA_ASSERT(DirectXRendererAPI::GetDXGraphicsContext(), "Graphics context is null!");
 	INFOMAN(*DirectXRendererAPI::GetDXGraphicsContext());
 	
 	switch (shaderType)
 	{	
 		case ShaderType::None:
-			SB_ASSERT("Failed to create shader: unknown shader type");
+			TERRA_ASSERT("Failed to create shader: unknown shader type");
 			break;	
 		case ShaderType::Vertex:
 		{
@@ -36,7 +36,7 @@ void Terra::DirectXShader::Bind() const
 	switch (m_Shadertype)
 	{
 	case ShaderType::None:
-		SB_ASSERT("Failed to bind shader: unknown shader type");
+		TERRA_ASSERT("Failed to bind shader: unknown shader type");
 		break;
 		
 	case ShaderType::Vertex:
@@ -65,14 +65,4 @@ void Terra::DirectXShader::SetFloat(const std::string& name, float value)
 {
 }
 
-void Terra::DirectXShader::SetFloat3(const std::string& name, const glm::vec3& value)
-{
-}
 
-void Terra::DirectXShader::SetFloat4(const std::string& name, const glm::vec4& value)
-{
-}
-
-void Terra::DirectXShader::SetMat4(const std::string& name, const glm::mat4& value)
-{
-}

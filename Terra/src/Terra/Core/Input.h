@@ -15,9 +15,9 @@ namespace Terra {
 		static bool IsMouseButtonPressed(int button);
 		
 		// Alternative way to get mouse position
-		static std::pair<float, float> GetMousePosition();
-		static float GetMouseX();
-		static float GetMouseY();
+		static std::pair<int, int> GetMousePosition();
+		static int GetMouseX();
+		static int GetMouseY();
 	};
 
 }

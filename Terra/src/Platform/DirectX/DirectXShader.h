@@ -13,26 +13,25 @@ namespace Terra
 		virtual void SetInt(const std::string& name, int value) override;
 		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) override;
 		virtual void SetFloat(const std::string& name, float value) override;
-		virtual void SetFloat3(const std::string& name, const glm::vec3& value) override;
-		virtual void SetFloat4(const std::string& name, const glm::vec4& value) override;
-		virtual void SetMat4(const std::string& name, const glm::mat4& value) override;
 
 		virtual const std::string& GetName() const { return "Shader name"; }
 		Microsoft::WRL::ComPtr<ID3DBlob> GetVSByteCode() 
 		{ 
-			SB_ASSERT(pVSByteCodeBlob, "VS Byte code blob is null"); 
+			TERRA_ASSERT(pVSByteCodeBlob, "VS Byte code blob is null"); 
 			return pVSByteCodeBlob; 
 		}
 
 	private:
+#ifndef NDEBUG
 		DXGIInfoManager& GetInfoManager(DirectXContext& gfx) { return gfx.infoManager; }
+#endif 
 	private:
 		std::wstring m_Path;
 		ShaderType m_Shadertype;
 		Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader;
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader;
 		Microsoft::WRL::ComPtr<ID3DBlob> pPSByteCodeBlob;
-		//static Microsoft::WRL::ComPtr<ID3DBlob> pVSByteCodeBlob; // needed in input layout
+		//static Microsoft::WRL::ComPtr<ID3DBlob> pVTERRAyteCodeBlob; // needed in input layout
 		Microsoft::WRL::ComPtr<ID3DBlob> pVSByteCodeBlob;
 	};
 

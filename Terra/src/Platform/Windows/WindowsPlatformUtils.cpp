@@ -3,16 +3,13 @@
 #include "Terra/Core/Application.h"
 
 #include <commdlg.h>
-#include <GLFW/glfw3.h>		
 
-// Gets parent window
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include <GLFW/glfw3native.h>
 
 namespace Terra {
 
 	std::string FileDialog::OpenFile(const char* filter)
 	{
+#if 0
 		OPENFILENAMEA ofn;		// asci version
 		CHAR szFile[260] = { 0 };
 		CHAR currentDir[256] = { 0 };
@@ -29,11 +26,13 @@ namespace Terra {
 		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;  // prevent changing working dir
 		if (GetOpenFileNameA(&ofn) == true)
 			return ofn.lpstrFile;
+#endif
 
 		return std::string();		// returns empty string if cancelled
 	}
 	std::string FileDialog::SaveFile(const char* filter)
 	{
+#if 0
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
 		CHAR currentDir[256] = { 0 };
@@ -55,6 +54,7 @@ namespace Terra {
 		if (GetSaveFileNameA(&ofn) == TRUE)
 			return ofn.lpstrFile;
 
+#endif
 		return std::string();
 	}
 }

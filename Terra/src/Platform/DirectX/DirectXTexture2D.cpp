@@ -103,7 +103,7 @@ void Terra::DirectXTexture2D::GetImageData(const std::string& path)
 	int width, height, channels;
 	stbi_set_flip_vertically_on_load(1);
 	m_imageData = stbi_load(path.c_str(), &width, &height, &channels, 4);
-	SB_CORE_ASSERT(m_imageData, "Failed to load image!");
+	TERRA_CORE_ASSERT(m_imageData, "Failed to load image!");
 	m_width = width;
 	m_height = height;
 	m_channels = channels;

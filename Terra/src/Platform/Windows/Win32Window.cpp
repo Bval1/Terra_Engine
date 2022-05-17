@@ -73,7 +73,7 @@ void Terra::Win32Window::Init(const WindowProps& props)
 	m_Data.RawMouseInput = props.RawMouseInput;
 	m_Data.Vsync = props.Vsync;
 
-	SB_CORE_INFO(L"Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+	//CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 	RECT wr;
 	wr.left = 0;
 	wr.right = GetWidth() + wr.left;
@@ -183,7 +183,7 @@ LRESULT Terra::Win32Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		{
 			if (wParam & WA_ACTIVE)
 			{
-				SB_TRACE("activate => confine cursor");
+				TERRA_TRACE("activate => confine cursor");
 				RECT rect;
 				::GetClientRect(hWnd, &rect);
 				::MapWindowPoints(hWnd, nullptr, reinterpret_cast<POINT*>(&rect), 2);
@@ -191,7 +191,7 @@ LRESULT Terra::Win32Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 			}
 			else
 			{
-				SB_TRACE("activate => free cursor");
+				TERRA_TRACE("activate => free cursor");
 				::ClipCursor(nullptr);
 			}
 		}
@@ -330,7 +330,7 @@ LRESULT Terra::Win32Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 			reinterpret_cast<HRAWINPUT>(lParam),
 			RID_INPUT, nullptr, &size, sizeof(RAWINPUTHEADER)) == -1)
 		{
-			SB_WARN("Raw mouse input error");
+			TERRA_WARN("Raw mouse input error");
 			break;	
 		}
 
@@ -340,7 +340,7 @@ LRESULT Terra::Win32Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 			reinterpret_cast<HRAWINPUT>(lParam),
 			RID_INPUT, m_RawBuffer.data(), &size, sizeof(RAWINPUTHEADER)) != size)
 		{
-			SB_WARN("Raw mouse input error");
+			TERRA_WARN("Raw mouse input error");
 			break;
 		}
 
@@ -352,7 +352,7 @@ LRESULT Terra::Win32Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 			// onrawdelta mouse event
 			RawMouseMovedEvent event(ri.data.mouse.lLastX, ri.data.mouse.lLastY);
 			m_Data.EventCallback(event);
-			SB_TRACE("{0}", event.ToString());
+			TERRA_TRACE("{0}", event.ToString());
 		}
 		break;	
 	}

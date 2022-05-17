@@ -1,10 +1,11 @@
 #include <Terra.h>	
-#include <imgui/imgui.h>
+#include "Terra/Core/EntryPoint.h"	
+
+#include <imgui.h>
 #include <DirectXMath.h>
 
 
 /* Only have one entry point active at a time */
-#include "Terra/Core/EntryPoint.h"	
 
 #include "SandboxApp.h"
 
@@ -37,7 +38,7 @@ public:
 		TERRA_CORE_TRACE("{0}, {1}", x, y);
 
 		TERRA_INFO("ExampleLayer::Update");	
-		if (Terra::Input::IsKeyPressed(SB_KEY_TAB))
+		if (Terra::Input::IsKeyPressed(TERRA_KEY_TAB))
 			TERRA_TRACE("Tab key is pressed (poll)!");
 	#endif
 	
@@ -82,7 +83,8 @@ public:
 
 	virtual void OnImGuiRender() override
 	{
-
+		bool open = false;
+		//ImGui::ShowDemoWindow(&open);
 		ImGui::Begin("Settings");
 		ImGui::ColorEdit4("Color", &materialConstants.color.x);
 		ImGui::DragFloat3("Model Position", &m_pos.x, 0.01f, -100.0f, 100.0f);

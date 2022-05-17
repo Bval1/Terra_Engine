@@ -1,4 +1,5 @@
 #include "Terrapch.h"
+#include "Renderer3D.h"
 #include "RenderCommand.h"
 #include "VertexArray.h"
 
@@ -71,7 +72,7 @@ namespace Terra {
 
 void Terra::Renderer3D::Init()
 {
-	SB_PROFILE_FUNCTION();
+	TERRA_PROFILE_FUNCTION();
 
 	s_FrameData.VertexArray = VertexArray::Create();
 	s_FrameData.TexturedPhongVS = Shader::Create(L"assets/shaders/D3D11/output/Renderer3D_VS.cso", Terra::ShaderType::Vertex);
@@ -160,7 +161,7 @@ void Terra::Renderer3D::NextBatch()
 
 void Terra::Renderer3D::Flush()
 {
-	SB_PROFILE_FUNCTION();
+	TERRA_PROFILE_FUNCTION();
 	constexpr uint32_t CB_count = 2u;	// cbs per model
 	
 	// Light
@@ -321,7 +322,7 @@ void Terra::Renderer3D::DrawPointLight(DirectX::XMFLOAT3& pos)
 
 void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, int32_t entityID, const Ref<Texture2D>& texture)
 {
-	SB_PROFILE_FUNCTION();
+	TERRA_PROFILE_FUNCTION();
 
 	auto modelView = transform * cameraData.ViewMatrix;
 	modelViewMat = {
@@ -360,7 +361,7 @@ void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& tra
 
 void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, const Ref<Texture2D>& texture)
 {
-	SB_PROFILE_FUNCTION();
+	TERRA_PROFILE_FUNCTION();
 
 	auto modelView = transform * cameraData.ViewMatrix;
 	modelViewMat = {

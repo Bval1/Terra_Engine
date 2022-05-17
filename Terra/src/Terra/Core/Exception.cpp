@@ -1,7 +1,7 @@
 #include "Terrapch.h"
 #include "Exception.h"
 
-const char* Terra::SBException::what() const noexcept
+const char* Terra::TerraException::what() const noexcept
 {
     std::ostringstream oss;
     oss << GetType() << std::endl << GetOriginString();
@@ -9,7 +9,7 @@ const char* Terra::SBException::what() const noexcept
     return m_WhatBuffer.c_str();
 }
 
-std::string Terra::SBException::GetOriginString() const noexcept
+std::string Terra::TerraException::GetOriginString() const noexcept
 {
     std::ostringstream oss;
     oss << "[File]" << m_File << std::endl

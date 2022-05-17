@@ -1,4 +1,5 @@
-//#include "sbpch.h"
+#include "Terrapch.h"
+//#include "TERRApch.h"
 //#include "Framebuffer.h"
 //#include "Terra/Renderer/Renderer.h"
 //#include "Platform/OpenGL/OpenGLFrameBuffer.h"
@@ -8,11 +9,11 @@
 //	{
 //		switch (Renderer::GetAPI())
 //		{
-//		case RendererAPI::API::None: SB_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+//		case RendererAPI::API::None: TERRA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 //		case RendererAPI::API::OpenGL: return CreateRef<OpenGLFramebuffer>(spec);
 //		}
 //
-//		SB_CORE_ASSERT(false, "Unknown RendererAPI!");
+//		TERRA_CORE_ASSERT(false, "Unknown RendererAPI!");
 //		return nullptr;
 //	}
 //}

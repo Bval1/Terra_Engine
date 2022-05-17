@@ -36,4 +36,4 @@ namespace Terra {
 
 
 // if dist build
-//#define SB_CORE_INFO   // set macro to nothing
+//#define TERRA_CORE_INFO   // set macro to nothing

@@ -10,11 +10,11 @@ namespace Terra
 		// Decide which API you're using
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None: SB_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		case RendererAPI::API::None: TERRA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::DirectX: return std::make_shared<DirectXVertexBuffer>(size);
 		}
 
-		SB_CORE_ASSERT(false, "Unknown RendererAPI!");
+		TERRA_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
 
@@ -23,11 +23,11 @@ namespace Terra
 		
 		switch (Renderer::GetAPI())
 		{
-			case RendererAPI::API::None: SB_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::None: TERRA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::DirectX: return std::make_shared<DirectXVertexBuffer>(vertices, size);
 		}
 
-		SB_CORE_ASSERT(false, "Unknown RendererAPI!");
+		TERRA_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
 
@@ -35,11 +35,11 @@ namespace Terra
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None: SB_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		case RendererAPI::API::None: TERRA_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::DirectX: return std::make_shared<DirectXIndexBuffer>(indices, count);
 		}
 
-		SB_CORE_ASSERT(false, "Unknown RendererAPI!");
+		TERRA_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 
 	}

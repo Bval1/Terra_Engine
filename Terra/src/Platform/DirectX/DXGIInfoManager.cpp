@@ -68,7 +68,7 @@ void Terra::DXGIInfoManager::DisplayDeviceInfo()
 
 		if (SUCCEEDED(hr))
 		{
-			SB_ASSERT(pDXGIFactory != NULL);
+			TERRA_ASSERT(pDXGIFactory != NULL);
 			EnumerateDXGIInfo(pDXGIFactory);
 
 			pDXGIFactory->Release();

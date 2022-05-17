@@ -20,7 +20,10 @@ namespace Terra {
 		virtual const Ref<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
 
 	private:
+#ifndef NDEBUG
 		DXGIInfoManager& GetInfoManager(DirectXContext& gfx) { return gfx.infoManager; }
+#endif 
+
 		static DXGI_FORMAT ShaderDataTypeToDXGIFormat(ShaderDataType type);
 	private:
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;

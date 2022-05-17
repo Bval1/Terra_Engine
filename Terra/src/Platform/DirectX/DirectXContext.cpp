@@ -16,7 +16,7 @@ Microsoft::WRL::ComPtr<ID3D11RenderTargetView> Terra::DirectXContext::pRenderTar
 Microsoft::WRL::ComPtr<ID3D11DepthStencilView> Terra::DirectXContext::pDepthStencilView = NULL;
 
 Terra::DirectXContext::HrException::HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs) noexcept
-	: SBException(line, file), m_Hr(hr)
+	: TerraException(line, file), m_Hr(hr)
 {
 	for (const auto& m : infoMsgs)
 	{
@@ -63,7 +63,7 @@ std::string Terra::DirectXContext::HrException::GetErrorDescription() const noex
 }
 
 Terra::DirectXContext::InfoException::InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept
-	: SBException(line, file)
+	: TerraException(line, file)
 {
 	for (const auto& m : infoMsgs)
 	{
@@ -89,14 +89,18 @@ const char* Terra::DirectXContext::InfoException::what() const noexcept
 Terra::DirectXContext::DirectXContext(HWND hWnd, int width, int height)
 	: m_WindowHandle(hWnd), m_Width(width), m_Height(height)
 {	
-	SB_CORE_INFO("Device Info:");
+
+#ifndef NDEBUG
+	CORE_INFO("Device Info:");
 	infoManager.DisplayDeviceInfo();
 
-	/*SB_CORE_ASSERT(hWnd, "Window handle is null!");
-	SB_CORE_INFO("DirectX Info:");
-	SB_CORE_INFO("	Vendor: {0}", D3D11_SDK_VERSION);
-	SB_CORE_INFO("	Renderer: {0}", "D3D11");
-	SB_CORE_INFO("	Version: {0}", D3D11_SHADER_MAJOR_VERSION);*/
+	/*CORE_ASSERT(hWnd, "Window handle is null!");
+	CORE_INFO("DirectX Info:");
+	CORE_INFO("	Vendor: {0}", D3D11_SDK_VERSION);
+	CORE_INFO("	Renderer: {0}", "D3D11");
+	CORE_INFO("	Version: {0}", D3D11_SHADER_MAJOR_VERSION);*/
+#endif
+
 }
 
 void Terra::DirectXContext::Init()
@@ -193,7 +197,6 @@ void Terra::DirectXContext::SwapBuffers()
 	HRESULT hr;
 #ifndef NDEBUG
 	infoManager.Set();
-#endif 
 
 	if (FAILED(hr = pSwapChain->Present(1u, 0u)))	// 1u to hit default monitor refresh rate (vsync), 2u for half, 0 for no vsync
 	{
@@ -202,6 +205,9 @@ void Terra::DirectXContext::SwapBuffers()
 		else
 			throw GFX_EXCEPT(hr);
 	}
+#else
+	pSwapChain->Present(1u, 0u);
+#endif 
 }
 
 void Terra::DirectXContext::BeginFrame(float r, float g, float b) noexcept

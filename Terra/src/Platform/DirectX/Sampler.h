@@ -8,7 +8,9 @@ namespace Terra
 		Sampler();
 		void Bind();
 	private:
+#ifndef NDEBUG
 		DXGIInfoManager& GetInfoManager(DirectXContext& gfx) { return gfx.infoManager; }
+#endif
 	private:
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> pSampler;
 	};

@@ -1,6 +1,5 @@
 #include "Terrapch.h"
 #include "Renderer.h"
-#include "Renderer2D.h"
 #include "Renderer3D.h"
 
 namespace Terra {

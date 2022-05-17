@@ -66,7 +66,7 @@ Terra::Sphere Terra::Sphere::CreateTesselated(uint32_t latDiv, uint32_t longDiv)
 
 Terra::Sphere Terra::Sphere::CreateTesselatedNormalized(uint32_t latDiv, uint32_t longDiv)
 {
-	SB_ASSERT(latDiv >= 3u && longDiv >= 3u);
+	TERRA_ASSERT(latDiv >= 3u && longDiv >= 3u);
 	constexpr float radius = 1.0f;
 	constexpr float PI = 3.14159265f;
 	const auto base = DirectX::XMVectorSet(0.0f, 0.0f, radius, 0.0f);

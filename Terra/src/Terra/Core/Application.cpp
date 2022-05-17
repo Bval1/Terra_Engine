@@ -17,20 +17,14 @@ namespace Terra {
 	Application::Application(const std::wstring& name, ApplicationCommandLineArgs args)
 		: m_CommandLineArgs(args)
 	{
-		SB_PROFILE_FUNCTION();
+		TERRA_PROFILE_FUNCTION();
 
-		SB_CORE_ASSERT(!s_Instance, "Application already exists!"); 
+		TERRA_CORE_ASSERT(!s_Instance, "Application already exists!"); 
 		s_Instance = this;
 
-		switch (RendererAPI::GetAPI())
-		{
-		case RendererAPI::API::OpenGL:
-			m_Window = std::unique_ptr<Window>(Window::CreateGLFWWindow(WindowProps(name)));
-			break;
-		case RendererAPI::API::DirectX:
-			m_Window = std::unique_ptr<Window>(Window::CreateWin32Window(WindowProps(name)));
-			break;	
-		}
+
+		m_Window = std::unique_ptr<Window>(Window::CreateWin32Window(WindowProps(name)));
+	
 	
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 		Renderer::Init();
@@ -43,12 +37,12 @@ namespace Terra {
 
 	Application::~Application()
 	{
-		SB_PROFILE_FUNCTION();
+		TERRA_PROFILE_FUNCTION();
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
-		SB_PROFILE_FUNCTION();
+		TERRA_PROFILE_FUNCTION();
 
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
@@ -56,7 +50,7 @@ namespace Terra {
 
 	void Application::PushOverlay(Layer* layer)
 	{
-		SB_PROFILE_FUNCTION();
+		TERRA_PROFILE_FUNCTION();
 
 		m_LayerStack.PushOverlay(layer);
 		layer->OnAttach();
@@ -64,7 +58,7 @@ namespace Terra {
 
 	void Application::OnEvent(Event& e)
 	{
-		SB_PROFILE_FUNCTION();
+		TERRA_PROFILE_FUNCTION();
 
 		// Use event dispatcher to assign apporiate events to functions
 		EventDispatcher dispatcher(e);
@@ -73,7 +67,7 @@ namespace Terra {
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowsResize));
 
-		//SB_CORE_TRACE("{0}", e);	
+		//TERRA_CORE_TRACE("{0}", e);	
 
 		// Go backwards through layerstack, break when event is handled
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
@@ -86,7 +80,7 @@ namespace Terra {
 
 	void Application::Run()
 	{
-		SB_PROFILE_FUNCTION();
+		TERRA_PROFILE_FUNCTION();
 		while (m_Running)
 		{
 #ifndef DIRECTX
@@ -98,12 +92,12 @@ namespace Terra {
 			Timestep timestep = std::chrono::duration<float>(time - m_LastFrameTime).count();
 			m_LastFrameTime = time;
 #endif
-			//SB_TRACE("{0} ms frametime", timestep.GetMilliseconds());
+			//TERRA_TRACE("{0} ms frametime", timestep.GetMilliseconds());
 
 			if (!m_Minimized)						// stop rendering if window is minimized
 			{
 				{
-					SB_PROFILE_SCOPE("LayerStack OnUpdate");
+					TERRA_PROFILE_SCOPE("LayerStack OnUpdate");
 					for (Layer* layer : m_LayerStack)			 // submit things for rendering
 						layer->OnUpdate(timestep);
 				}
@@ -111,7 +105,7 @@ namespace Terra {
 #ifndef IMGUIOFF		
 				m_ImGuiLayer->Begin();
 				{
-					SB_PROFILE_SCOPE("LayerStack OnImGuiRender");
+					TERRA_PROFILE_SCOPE("LayerStack OnImGuiRender");
 					for (Layer* layer : m_LayerStack)			// call imgui render for all layers
 						layer->OnImGuiRender();
 				}
@@ -130,7 +124,7 @@ namespace Terra {
 	}
 	bool Application::OnWindowsResize(WindowResizeEvent& e)
 	{
-		SB_PROFILE_FUNCTION();
+		TERRA_PROFILE_FUNCTION();
 
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)		// window is minimized
 		{

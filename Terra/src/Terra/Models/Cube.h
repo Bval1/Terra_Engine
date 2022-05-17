@@ -32,7 +32,7 @@ namespace Terra
 		{
 			using namespace DirectX;  // to use - overload
 			// assert face-independent vertices w/ normals cleared to zero
-			SB_ASSERT(indices.size() % 3 == 0 && indices.size() > 0);
+			TERRA_ASSERT(indices.size() % 3 == 0 && indices.size() > 0);
 			for (uint32_t i = 0; i < indices.size(); i += 3)
 			{
 				auto& v0 = vertices[indices[i]];
@@ -54,7 +54,7 @@ namespace Terra
 		template<typename T>
 		static void SetTextureCoordinates(std::vector<T>& vertices)
 		{
-			SB_ASSERT(vertices.size() == 24);
+			TERRA_ASSERT(vertices.size() == 24);
 			vertices[0].tex =	{ 0.0f,0.0f };
 			vertices[1].tex =	{ 1.0f,0.0f };
 			vertices[2].tex =	{ 0.0f,1.0f };

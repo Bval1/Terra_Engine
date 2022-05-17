@@ -26,7 +26,7 @@ namespace Terra {
 			case ShaderDataType::Bool:		return 1;
 		}
 
-		SB_CORE_ASSERT(false, "Unknown ShaderDataType!");
+		TERRA_CORE_ASSERT(false, "Unknown ShaderDataType!");
 		return 0;
 	}
 
@@ -74,7 +74,7 @@ namespace Terra {
 				case ShaderDataType::Bool:		return 1;
 			}
 
-			SB_CORE_ASSERT(false, "Unknown ShaderDataType!");
+			TERRA_CORE_ASSERT(false, "Unknown ShaderDataType!");
 			return 0;
 		}
 	};

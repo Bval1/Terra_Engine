@@ -27,7 +27,9 @@ namespace Terra
 		static Microsoft::WRL::ComPtr<ID3D11DepthStencilView> GetDepthStencilView() { return DirectXContext::pDepthStencilView; }
 
 	private:
+#ifndef NDEBUG
 		DXGIInfoManager& GetInfoManager(DirectXContext& gfx) { return gfx.infoManager; }
+#endif
 		static Ref<DirectXContext> m_DXContext;
 	};
 }

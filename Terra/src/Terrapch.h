@@ -2,8 +2,8 @@
 //	Include in every cpp file
 
 //	Setting pch manually:
-//	sbpch.cpp -> properties -> precompiled headers -> create pch
-//	GameEngine -> properties -> Use pch -> set as sbpch.h
+//	TERRApch.cpp -> properties -> precompiled headers -> create pch
+//	GameEngine -> properties -> Use pch -> set as TERRApch.h
 
 
 #include <iostream>
@@ -23,7 +23,7 @@
 #include "Terra/Debug/Instrumentor.h"
 
 
-#ifdef SB_PLATFORM_WINDOWS
+#ifdef TERRA_PLATFORM_WINDOWS
 	#include "Platform/Windows/Win32Config.h"
 #endif
 

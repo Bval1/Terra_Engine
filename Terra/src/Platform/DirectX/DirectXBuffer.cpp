@@ -24,7 +24,7 @@ void Terra::DirectXVertexBuffer::Unbind() const
 
 void Terra::DirectXVertexBuffer::SetData(const void* data, uint32_t size)
 {
-	SB_ASSERT(DirectXRendererAPI::GetDXGraphicsContext(), "Graphics Context is null!");
+	TERRA_ASSERT(DirectXRendererAPI::GetDXGraphicsContext(), "Graphics Context is null!");
 	INFOMAN(*DirectXRendererAPI::GetDXGraphicsContext());
 	D3D11_BUFFER_DESC bd = {};
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -47,7 +47,7 @@ void Terra::DirectXVertexBuffer::SetLayout(const BufferLayout& layout)
 Terra::DirectXIndexBuffer::DirectXIndexBuffer(uint32_t* indices, uint32_t count)
 	: m_Count(count)
 {
-	SB_ASSERT(DirectXRendererAPI::GetDXGraphicsContext(), "Graphics Context is null!");
+	TERRA_ASSERT(DirectXRendererAPI::GetDXGraphicsContext(), "Graphics Context is null!");
 	INFOMAN(*DirectXRendererAPI::GetDXGraphicsContext());
 	D3D11_BUFFER_DESC ibd = {};
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;

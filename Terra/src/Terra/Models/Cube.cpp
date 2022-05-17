@@ -58,7 +58,7 @@ Terra::Cube Terra::Cube::CreateSolid()
 
 Terra::Cube Terra::Cube::Create()
 {
-	SB_PROFILE_FUNCTION();
+	TERRA_PROFILE_FUNCTION();
 	struct Vertex
 	{
 		DirectX::XMFLOAT3 pos;

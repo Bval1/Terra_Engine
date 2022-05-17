@@ -9,7 +9,7 @@ Terra::Mesh Terra::Mesh::Create(const std::string& path)
 		aiProcess_GenNormals);
 
 
-	SB_ASSERT(pModel, imp.GetErrorString());
+	TERRA_ASSERT(pModel, imp.GetErrorString());
 
 
 	const auto root = pModel->mMeshes[0];
@@ -60,7 +60,7 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 	for (uint32_t i = 0; i < mesh->mNumFaces; i++)
 	{
 		const auto& face = mesh->mFaces[i];
-		SB_ASSERT(face.mNumIndices == 3, "Faces should be all triangles");
+		TERRA_ASSERT(face.mNumIndices == 3, "Faces should be all triangles");
 		indices.emplace_back(face.mIndices[0]);
 		indices.emplace_back(face.mIndices[1]);
 		indices.emplace_back(face.mIndices[2]);

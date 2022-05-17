@@ -2,8 +2,8 @@
 #include "PerspectiveCamera.h"
 #include "Terra/Core/Input.h"
 #include "Terra/Core/KeyCodes.h"
-#include "imgui.h"
 
+#include <imgui.h>
 #include <numbers>
 namespace DX = DirectX;
 
@@ -19,7 +19,7 @@ Terra::PerspectiveCamera::PerspectiveCamera(float viewWidth, float viewHeight, f
 
 void Terra::PerspectiveCamera::OnUpdate(Timestep ts)
 {
-	const DX::XMFLOAT2 mousePos{ Input::GetMouseX(), Input::GetMouseY() };
+	const DX::XMFLOAT2 mousePos{ (float)Input::GetMouseX(), (float)Input::GetMouseY() };
 	DX::XMVECTOR delta = DX::XMVectorSubtract(DX::XMLoadFloat2(&mousePos), DX::XMLoadFloat2(&m_InitMousePosition));
 	m_InitMousePosition = mousePos;
 	DX::XMFLOAT2 deltafloat;
@@ -29,15 +29,15 @@ void Terra::PerspectiveCamera::OnUpdate(Timestep ts)
 	deltafloat.x *= mouseSpeedFactor;
 	deltafloat.y *= mouseSpeedFactor;
 
-	if (Input::IsKeyPressed(SB_KEY_LEFT_SHIFT))	// Blender controls
+	if (Input::IsKeyPressed(TERRA_KEY_LEFT_SHIFT))	// Blender controls
 	{
-		if (Input::IsMouseButtonPressed(SB_MOUSE_BUTTON_MIDDLE))
+		if (Input::IsMouseButtonPressed(TERRA_MOUSE_BUTTON_MIDDLE))
 			MousePan(deltafloat);
 
-		else if (Input::IsMouseButtonPressed(SB_MOUSE_BUTTON_RIGHT))
+		else if (Input::IsMouseButtonPressed(TERRA_MOUSE_BUTTON_RIGHT))
 			MouseZoom(deltafloat.y);
 	}
-	else if (Input::IsMouseButtonPressed(SB_MOUSE_BUTTON_MIDDLE))
+	else if (Input::IsMouseButtonPressed(TERRA_MOUSE_BUTTON_MIDDLE))
 		MouseRotate(deltafloat);
 
 	
@@ -139,7 +139,7 @@ void Terra::PerspectiveCamera::MouseRotate(DirectX::XMFLOAT2& delta)
 void Terra::PerspectiveCamera::OnEvent(Event& e)
 {
 	EventDispatcher dispatcher(e);
-	dispatcher.Dispatch<MouseScrolledEvent>(SB_BIND_EVENT_FN(PerspectiveCamera::OnMouseScroll));
+	dispatcher.Dispatch<MouseScrolledEvent>(TERRA_BIND_EVENT_FN(PerspectiveCamera::OnMouseScroll));
 }
 
 bool Terra::PerspectiveCamera::OnMouseScroll(MouseScrolledEvent& e)
