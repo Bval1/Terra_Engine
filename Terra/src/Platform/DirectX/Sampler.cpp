@@ -14,7 +14,7 @@ Terra::Sampler::Sampler()
 	GFX_THROW_INFO(DirectXRendererAPI::GetDevice()->CreateSamplerState(&samplerDesc, &pSampler));
 }
 
-void Terra::Sampler::Bind()
+void Terra::Sampler::Bind(uint32_t slot)
 {
-	DirectXRendererAPI::GetDeviceContext()->PSSetSamplers(0, 1, pSampler.GetAddressOf());
+	DirectXRendererAPI::GetDeviceContext()->PSSetSamplers(slot, 1, pSampler.GetAddressOf());
 }

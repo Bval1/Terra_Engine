@@ -26,6 +26,8 @@ namespace Terra {
 		Ref<Shader> TexturedPhongVS;
 		Ref<Shader> TexturedPhongPS;
 
+		Ref<Shader> SpecularPhongPS;
+
 		Ref<Shader> SolidPhongVS;
 		Ref<Shader> SolidPhongPS;
 
@@ -43,7 +45,6 @@ namespace Terra {
 		float specularPower = 30.0f;
 		float padding[2];
 	} material;
-
 
 	struct ObjectMaterialData
 	{
@@ -77,6 +78,8 @@ void Terra::Renderer3D::Init()
 	s_FrameData.VertexArray = VertexArray::Create();
 	s_FrameData.TexturedPhongVS = Shader::Create(L"assets/shaders/D3D11/output/Renderer3D_VS.cso", Terra::ShaderType::Vertex);
 	s_FrameData.TexturedPhongPS = Shader::Create(L"assets/shaders/D3D11/output/Renderer3D_PS.cso", Terra::ShaderType::Pixel);
+	s_FrameData.SpecularPhongPS = Shader::Create(L"assets/shaders/D3D11/output/Renderer3D_SpecularPS.cso", Terra::ShaderType::Pixel);
+	
 	s_FrameData.SolidPhongVS = Shader::Create(L"assets/shaders/D3D11/output/Renderer3DSolid_VS.cso", Terra::ShaderType::Vertex);
 	s_FrameData.SolidPhongPS = Shader::Create(L"assets/shaders/D3D11/output/Renderer3DSolid_PS.cso", Terra::ShaderType::Pixel);
 	s_FrameData.BasicVS = Shader::Create(L"assets/shaders/D3D11/output/VS.cso", Terra::ShaderType::Vertex);
@@ -230,14 +233,15 @@ void Terra::Renderer3D::Flush()
 
 	// Custom Meshes
 	for (const auto& [path, meshBase] : s_FrameData.MeshMap)
-	{
-		//FlushMesh(mesh);
+	{		
 		for (auto& childMesh : meshBase->GetChildMeshes())
-			FlushMesh(childMesh);
+		{
+			childMesh->VertexCB = meshBase->VertexCB;
+			if (!childMesh->hasSpecular)
+				childMesh->PixelCB = meshBase->PixelCB;
 
-		//mesh->constantBuffers.clear();
-		for (auto& childMesh : meshBase->GetChildMeshes())
-			childMesh->constantBuffers.clear();
+			FlushMesh(childMesh, childMesh->hasSpecular);
+		}
 	}
 
 	// Sphere
@@ -259,24 +263,31 @@ void Terra::Renderer3D::Flush()
 	s_FrameData.Sphere->constantBuffers.clear();
 }
 
-void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh)
+void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular)
 {
-	constexpr uint32_t CBstride = 2u;
 	s_FrameData.TexMeshVertexBuffer->SetData(mesh->VertexData(), mesh->VertexDataSize());
 	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexMeshVertexBuffer);
 	s_FrameData.VertexArray->SetIndexBuffer(mesh->GetIndexBuffer());
-	mesh->texture->Bind();
+	for (const auto& tex : mesh->textures)
+	{
+		if(tex)
+			tex->Bind();
+	}
+
 	s_FrameData.TexturedPhongVS->Bind();
-	s_FrameData.TexturedPhongPS->Bind();
+	
+	if (!hasSpecular)
+		s_FrameData.TexturedPhongPS->Bind();
+	else
+		s_FrameData.SpecularPhongPS->Bind();
+
 	s_FrameData.VertexArray->Bind();
 
-	for (size_t i = 0; i < mesh->constantBuffers.size();)
-	{
-		mesh->constantBuffers[i]->Bind();
-		mesh->constantBuffers[i + 1]->Bind();
-		RenderCommand::DrawIndexed(s_FrameData.VertexArray);
-		i += CBstride;
-	}
+	mesh->VertexCB->Bind();
+	if (!hasSpecular)
+		mesh->PixelCB->Bind();
+
+	RenderCommand::DrawIndexed(s_FrameData.VertexArray);
 }
 
 
@@ -320,81 +331,28 @@ void Terra::Renderer3D::DrawPointLight(DirectX::XMFLOAT3& pos)
 		Terra::UniformBuffer::ConstantBufferType::Pixel));
 }
 
-void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, int32_t entityID, const Ref<Texture2D>& texture)
+void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, DirectX::XMFLOAT4 color)
 {
 	TERRA_PROFILE_FUNCTION();
-
-	auto modelView = transform * cameraData.ViewMatrix;
-	modelViewMat = {
-		DirectX::XMMatrixTranspose(modelView),
-		DirectX::XMMatrixTranspose(modelView * cameraData.ViewProjection),
-
-	};
-	objectMaterialData.color = color;
-	objectMaterialData.entityID = entityID;
-
-	if (s_FrameData.MeshMap.find(path) != s_FrameData.MeshMap.end())
-	{
-		const auto& mesh = s_FrameData.MeshMap.at(path);
-
-		mesh->constantBuffers.emplace_back(UniformBuffer::Create(&modelViewMat, sizeof(modelViewMat), 0u,
-			Terra::UniformBuffer::ConstantBufferType::Vertex));
-
-		mesh->constantBuffers.emplace_back(UniformBuffer::Create(&objectMaterialData, sizeof(ObjectMaterialData), 1u,
-			Terra::UniformBuffer::ConstantBufferType::Pixel));
-	}
-	else
-	{
-		Ref<Mesh> mesh = CreateRef<Mesh>(Mesh::Create(path)); // sets its index buffer in ctor
-
-		mesh->constantBuffers.emplace_back(UniformBuffer::Create(&modelViewMat, sizeof(modelViewMat), 0u,
-			Terra::UniformBuffer::ConstantBufferType::Vertex));
-
-		mesh->constantBuffers.emplace_back(UniformBuffer::Create(&objectMaterialData, sizeof(ObjectMaterialData), 1u,
-			Terra::UniformBuffer::ConstantBufferType::Pixel));
-
-		s_FrameData.MeshMap.insert({ path, mesh });
-	}
-
-	s_FrameData.MeshCount++;
-}
-
-void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, const Ref<Texture2D>& texture)
-{
-	TERRA_PROFILE_FUNCTION();
-
 	auto modelView = transform * cameraData.ViewMatrix;
 	modelViewMat = {
 		DirectX::XMMatrixTranspose(modelView),
 		DirectX::XMMatrixTranspose(modelView * cameraData.ViewProjection)
 	};
 	//material.color = color;
+	Ref<Mesh> meshBase;
+	
+	if (s_FrameData.MeshMap.find(path) != s_FrameData.MeshMap.end())
+		meshBase = s_FrameData.MeshMap.at(path);
+	else
+		meshBase = CreateRef<Mesh>(Mesh::Create(path)); // sets its index buffer in ctor	
 
-	const auto& transformCbuf = UniformBuffer::Create(&modelViewMat, sizeof(ModelViewMat), 0u,
+	meshBase->VertexCB = UniformBuffer::Create(&modelViewMat, sizeof(ModelViewMat), 0u,
 		Terra::UniformBuffer::ConstantBufferType::Vertex);
 
-	const auto& pixelCbuf = UniformBuffer::Create(&material, sizeof(Material), 1u,
+	meshBase->PixelCB = UniformBuffer::Create(&material, sizeof(Material), 1u,
 		Terra::UniformBuffer::ConstantBufferType::Pixel);
-
-	Ref<Mesh> meshBase;
-	if (s_FrameData.MeshMap.find(path) != s_FrameData.MeshMap.end())
-	{
-		meshBase = s_FrameData.MeshMap.at(path);
-	}
-	else
-	{
-		 meshBase = CreateRef<Mesh>(Mesh::Create(path)); // sets its index buffer in ctor	
-	}
-
-	//mesh->constantBuffers.emplace_back(transformCbuf);
-	//mesh->constantBuffers.emplace_back(pixelCbuf);
-
-	for (auto& childMesh : meshBase->GetChildMeshes())
-	{
-		childMesh->constantBuffers.emplace_back(transformCbuf);
-		childMesh->constantBuffers.emplace_back(pixelCbuf);
-	}
-
+	
 	s_FrameData.MeshMap.insert({ path, meshBase });
 	s_FrameData.MeshCount++;
 }

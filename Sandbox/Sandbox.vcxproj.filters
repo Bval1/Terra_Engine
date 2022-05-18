@@ -23,6 +23,7 @@
     <FxCompile Include="assets\shaders\D3D11\TexturePS.hlsl" />
     <FxCompile Include="assets\shaders\D3D11\TextureVS.hlsl" />
     <FxCompile Include="assets\shaders\D3D11\VS.hlsl" />
+    <FxCompile Include="assets\shaders\D3D11\Renderer3D_SpecularPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SandboxApp.cpp">

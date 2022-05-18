@@ -41,8 +41,8 @@ Terra::DirectXTexture2D::DirectXTexture2D(uint32_t width, uint32_t height)
 	));
 }
 
-Terra::DirectXTexture2D::DirectXTexture2D(const std::string& path)
-	:m_path(path)
+Terra::DirectXTexture2D::DirectXTexture2D(const std::string& path, uint32_t slot)
+	:m_path(path), m_slot(slot)
 {
 
 	INFOMAN(*DirectXRendererAPI::GetDXGraphicsContext());
@@ -92,10 +92,10 @@ Terra::DirectXTexture2D::~DirectXTexture2D()
 {
 }
 
-void Terra::DirectXTexture2D::Bind(uint32_t slot) const
+void Terra::DirectXTexture2D::Bind() const
 {
 	m_sampler->Bind();
-	DirectXRendererAPI::GetDeviceContext()->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+	DirectXRendererAPI::GetDeviceContext()->PSSetShaderResources(m_slot, 1u, pTextureView.GetAddressOf());
 }
 
 void Terra::DirectXTexture2D::GetImageData(const std::string& path)

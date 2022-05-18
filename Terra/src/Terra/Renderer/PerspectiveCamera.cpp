@@ -7,6 +7,7 @@
 #include <numbers>
 namespace DX = DirectX;
 
+
 // directxmath  load and store functions:
 //https://docs.microsoft.com/en-us/windows/win32/dxmath/ovw-xnamath-reference-functions-load
 //https://docs.microsoft.com/en-us/windows/win32/dxmath/ovw-xnamath-reference-functions-storage
@@ -29,6 +30,8 @@ void Terra::PerspectiveCamera::OnUpdate(Timestep ts)
 	deltafloat.x *= mouseSpeedFactor;
 	deltafloat.y *= mouseSpeedFactor;
 
+
+#ifdef BLENDER
 	if (Input::IsKeyPressed(TERRA_KEY_LEFT_SHIFT))	// Blender controls
 	{
 		if (Input::IsMouseButtonPressed(TERRA_MOUSE_BUTTON_MIDDLE))
@@ -39,7 +42,15 @@ void Terra::PerspectiveCamera::OnUpdate(Timestep ts)
 	}
 	else if (Input::IsMouseButtonPressed(TERRA_MOUSE_BUTTON_MIDDLE))
 		MouseRotate(deltafloat);
-
+#else
+	if (Input::IsKeyPressed(TERRA_KEY_LEFT_ALT))	// 3DSMAX
+	{
+		if (Input::IsMouseButtonPressed(TERRA_MOUSE_BUTTON_MIDDLE))
+			MouseRotate(deltafloat);
+	}
+	else if (Input::IsMouseButtonPressed(TERRA_MOUSE_BUTTON_MIDDLE))
+		MousePan(deltafloat);
+#endif
 	
 	UpdateView();
 }
@@ -112,7 +123,7 @@ void Terra::PerspectiveCamera::MousePan(DirectX::XMFLOAT2& delta)
 {
 
 	auto [xSpeed, ySpeed] = PanSpeed();
-	DirectX::XMFLOAT3 translation = { -delta.x, -delta.y, 0.0f };
+	DirectX::XMFLOAT3 translation = { -delta.x, delta.y, 0.0f };
 
 	DirectX::XMStoreFloat3(&translation, DirectX::XMVector3Transform(
 		DirectX::XMLoadFloat3(&translation), DirectX::XMMatrixRotationRollPitchYaw(m_pitch, m_yaw, 0.0f) *

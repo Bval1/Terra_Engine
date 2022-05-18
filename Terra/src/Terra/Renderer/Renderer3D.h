@@ -18,12 +18,11 @@ namespace Terra
 		static void StartBatch();
 		static void NextBatch();
 		static void Flush();
-		static void FlushMesh(const Ref<Mesh>& mesh);
+		static void FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular = 0);
 
 		static void DrawPointLight(DirectX::XMFLOAT3& pos);
 		static void DrawPointLight(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT4& diffusecolor);
-		static void DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, int32_t entityID, const Ref<Texture2D>& texture = nullptr);
-		static void DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, const Ref<Texture2D>& texture = nullptr);
+		static void DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 0.f));
 		
 		static void DrawCube(DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, const Ref<Texture2D>& texture = nullptr);
 		

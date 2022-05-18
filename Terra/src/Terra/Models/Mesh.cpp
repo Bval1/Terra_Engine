@@ -65,10 +65,11 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 		indices.emplace_back(face.mIndices[1]);
 		indices.emplace_back(face.mIndices[2]);
 	}
-	Ref<Texture2D> diffuseTex;
-	DirectX::XMFLOAT4 meshColor = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 1.f);
+	//Ref<Texture2D> diffuseTex;
+	std::vector<Ref<Texture2D>> textures;
+	DirectX::XMFLOAT4 meshColor = DirectX::XMFLOAT4(1.f, 1.f, 1.f, 1.f);
 	float shine = 25.0f;
-	bool hasSpecularMap = false;
+	bool hasSpecular = false;
 	if (mesh->mMaterialIndex >= 0)
 	{
 		auto& material = *pMaterials[mesh->mMaterialIndex];
@@ -79,18 +80,28 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 		
 		aiString texFileName;
 		material.GetTexture(aiTextureType_DIFFUSE, 0, &texFileName);
-		diffuseTex = CreateRef<DirectXTexture2D>(basePath + texFileName.C_Str());
-		material.Get(AI_MATKEY_SHININESS, shine);
+
+		textures.emplace_back(CreateRef<DirectXTexture2D>(basePath + texFileName.C_Str(), 0u));
+
+		if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS)
+		{
+			hasSpecular = true;
+			textures.emplace_back(CreateRef<DirectXTexture2D>(basePath + texFileName.C_Str(), 1u));
+		}
+		else
+		{
+			material.Get(AI_MATKEY_SHININESS, shine);
+		}
 	}
 	else
 	{
 		TERRA_WARN("No materials found in mesh");
-		diffuseTex= CreateRef<DirectXTexture2D>(1.0f, 1.0f);
+		//diffuseTex= CreateRef<DirectXTexture2D>(1.0f, 1.0f);
 	}
 
 	const auto& numofElements = sizeof(Vertex) / sizeof(float);
 
 	
 	return Terra::CreateRef<Mesh>(vertices.data(), numofElements * vertices.size(), indices.data(),
-		indices.size(), diffuseTex, meshColor);
+		indices.size(), textures, meshColor, hasSpecular);
 }

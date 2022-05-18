@@ -6,7 +6,7 @@ namespace Terra
 	{
 	public:
 		Sampler();
-		void Bind();
+		void Bind(uint32_t slot = 0u);
 	private:
 #ifndef NDEBUG
 		DXGIInfoManager& GetInfoManager(DirectXContext& gfx) { return gfx.infoManager; }

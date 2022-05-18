@@ -11,32 +11,9 @@ namespace Terra {
 	{
 	public:
 		Mesh() = default;
-#if 0
-		Mesh(std::vector<float>& vertices, std::vector<uint32_t>& indices, Ref<Texture2D> diffuse)
-		{
-			m_indexBuffer = IndexBuffer::Create(indices.data(), indices.size());
 
-			m_vertexData = new float[vertices.size()];
-			m_vertexSize = vertices.size() * sizeof(float);
-			memcpy(m_vertexData, vertices.data(), m_vertexSize);
-			texture = diffuse;
-		}
-
-		Mesh(std::vector<float>& vertices, std::vector<uint32_t>& indices, std::vector<Ref<Mesh>> childMeshes, Ref<Texture2D> diffuse)
-		{
-			m_indexBuffer = IndexBuffer::Create(indices.data(), indices.size());
-
-			m_vertexData = new float[vertices.size()];
-			m_vertexSize = vertices.size() * sizeof(float);
-			memcpy(m_vertexData, vertices.data(), m_vertexSize);
-
-			m_pMeshes.resize(childMeshes.size());
-			m_pMeshes = std::move(childMeshes);
-			texture = diffuse;
-		}
-#endif
-		Mesh(void* vertices, uint32_t vertexElementCount, uint32_t* indices, uint32_t indexCount, 
-			Ref<Texture2D> diffuseTex, DirectX::XMFLOAT4 matColor)
+		Mesh(void* vertices, uint32_t vertexElementCount, uint32_t* indices, uint32_t indexCount, std::vector<Ref<Texture2D>> texs,
+			DirectX::XMFLOAT4 matColor = { 1.f , 1.f, 1.f, 1.f }, bool hasSpec = 0)
 		{
 			m_indexBuffer = IndexBuffer::Create(indices, indexCount);
 
@@ -44,15 +21,15 @@ namespace Terra {
 			m_vertexSize = vertexElementCount * sizeof(float);
 			memcpy(m_vertexData, vertices, m_vertexSize);
 
-			texture = diffuseTex;
+			textures = texs;
 			color = matColor;
+			hasSpecular = hasSpec;
 		}
 
 		Mesh(std::vector<Ref<Mesh>> childMeshes)
 		{
 			m_pMeshes.resize(childMeshes.size());
 			m_pMeshes = std::move(childMeshes);
-			//texture = diffuse;
 		}
 
 		virtual ~Mesh() = default;
@@ -73,8 +50,12 @@ namespace Terra {
 		DirectX::XMMATRIX transform;
 		DirectX::XMFLOAT4 color;
 		Ref<Texture2D> texture;
+		std::vector<Ref<Texture2D>> textures;
 		std::vector<Ref<UniformBuffer>> constantBuffers;
+		Ref<UniformBuffer> VertexCB;
+		Ref<UniformBuffer> PixelCB;
 		float specularPower = 0.0f;
+		bool hasSpecular = false;
 	
 	protected:
 		float* m_vertexData;

@@ -73,7 +73,7 @@ public:
 		Terra::Renderer3D::DrawPointLight(m_lightpos);
 		int id = 1;
 		//Terra::Renderer3D::DrawMesh("assets\\models\\suzanne.obj", transform1, meshcolor, id);
-		Terra::Renderer3D::DrawMesh("assets\\models\\nano_textured\\nanosuit.obj", transform2, whitecolor);
+		Terra::Renderer3D::DrawMesh("assets\\models\\nano_textured\\nanosuit.obj", transform2);
 		//Terra::Renderer3D::DrawMesh("assets\\models\\Terra_logo\\Terra.obj", transform1, meshcolor);
 		//Terra::Renderer3D::DrawCube(transform4, meshcolor, m_Texture);
 		//Terra::Renderer3D::DrawPlane(pos1, meshcolor, m_Texture);
