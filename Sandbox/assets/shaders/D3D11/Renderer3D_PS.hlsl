@@ -1,3 +1,4 @@
+//#define USECOLOR
 cbuffer LightCBuf
 {
     float3 lightPos;
@@ -11,7 +12,9 @@ cbuffer LightCBuf
 
 cbuffer ObjectCBuf  // set per object for each object rendered, use slot 1
 {
-    //float4 materialColor;
+#ifdef USECOLOR 
+    float4 materialColor;
+#endif
     float specularIntensity;
     float specularPower;
     float padding[2];
@@ -46,6 +49,11 @@ float4 main(float3 worldPos : Position, float3 n : Normal, float2 tc : Texcoord)
     pow(max(0.0f, dot(normalize(-r), normalize(worldPos))), specularPower);
 
     // final color
-    //const float3 color = { materialColor.r, materialColor.g, materialColor.b };
-    return float4(saturate((diffuse + ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
+#ifdef USECOLOR
+    const float3 color = { materialColor.r, materialColor.g, materialColor.b };
+    return float4(saturate((diffuse + ambient) * color + specular), 1.0f);
+#else
+   return float4(saturate((diffuse + ambient) * tex.Sample(splr, tc).rgb + specular), 1.0f);
+#endif
+    
 }

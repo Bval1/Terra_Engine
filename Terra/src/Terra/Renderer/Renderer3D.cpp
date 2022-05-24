@@ -40,7 +40,7 @@ namespace Terra {
 
 	struct Material
 	{
-		//DirectX::XMFLOAT4 color = { 1.0f, 0.3f, 0.3f, 1.0f };
+		//DirectX::XMFLOAT4 color;
 		float specularIntensity = 0.8f;
 		float specularPower = 30.0f;
 		float padding[2];
@@ -97,7 +97,7 @@ void Terra::Renderer3D::Init()
 	s_FrameData.LightVertexBuffer->SetData(s_FrameData.Light->VertexData(), s_FrameData.Light->VertexDataSize());
 	
 
-	// Init Solid Meshes
+	// Init Solid Models
 	s_FrameData.Sphere = std::make_unique<Sphere>(Sphere::CreateTesselatedNormalized(12, 24));
 	s_FrameData.SolidMeshVertexBuffer = VertexBuffer::Create(sizeof(VertexBuffer)); // will resize when setting data
 	BufferLayout layout = 
@@ -109,7 +109,7 @@ void Terra::Renderer3D::Init()
 	s_FrameData.SolidMeshVertexBuffer->SetLayout(layout);
 
 
-	// Init Textured Meshes
+	// Init Textured Models
 	s_FrameData.Cube = std::make_unique<Cube>(Cube::Create());
 	s_FrameData.Plane = std::make_unique<Plane>(Plane::Create());
 
@@ -125,7 +125,6 @@ void Terra::Renderer3D::Init()
 	
 	
 	s_FrameData.WhiteTexture = Texture2D::Create(1u, 1u);
-
 }
 
 void Terra::Renderer3D::Shutdown()
@@ -236,14 +235,10 @@ void Terra::Renderer3D::Flush()
 	{		
 		for (auto& childMesh : meshBase->GetChildMeshes())
 		{
-			childMesh->VertexCB = meshBase->VertexCB;
-			if (!childMesh->hasSpecular)
-				childMesh->PixelCB = meshBase->PixelCB;
-
 			FlushMesh(childMesh, childMesh->hasSpecular);
 		}
 	}
-
+	
 	// Sphere
 	s_FrameData.SolidMeshVertexBuffer->SetData(s_FrameData.Sphere->VertexData(), s_FrameData.Sphere->VertexDataSize());
 	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.SolidMeshVertexBuffer);
@@ -284,10 +279,15 @@ void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular)
 	s_FrameData.VertexArray->Bind();
 
 	mesh->VertexCB->Bind();
-	if (!hasSpecular)
-		mesh->PixelCB->Bind();
 
-	RenderCommand::DrawIndexed(s_FrameData.VertexArray);
+	
+	// Uses a pixel shader that takes in a pCB
+	if (!hasSpecular)
+	{
+		mesh->PixelCB->Bind();
+	}
+
+	RenderCommand::DrawIndexed(s_FrameData.VertexArray); 
 }
 
 
@@ -331,7 +331,7 @@ void Terra::Renderer3D::DrawPointLight(DirectX::XMFLOAT3& pos)
 		Terra::UniformBuffer::ConstantBufferType::Pixel));
 }
 
-void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, DirectX::XMFLOAT4 color)
+void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, std::optional<DirectX::XMFLOAT4> color)
 {
 	TERRA_PROFILE_FUNCTION();
 	auto modelView = transform * cameraData.ViewMatrix;
@@ -339,21 +339,32 @@ void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& tra
 		DirectX::XMMatrixTranspose(modelView),
 		DirectX::XMMatrixTranspose(modelView * cameraData.ViewProjection)
 	};
-	//material.color = color;
+
 	Ref<Mesh> meshBase;
-	
 	if (s_FrameData.MeshMap.find(path) != s_FrameData.MeshMap.end())
+	{
 		meshBase = s_FrameData.MeshMap.at(path);
+		meshBase->VertexCB->Update(&modelViewMat, sizeof(ModelViewMat));
+	}	
 	else
-		meshBase = CreateRef<Mesh>(Mesh::Create(path)); // sets its index buffer in ctor	
+	{
+		meshBase = CreateRef<Mesh>(Mesh::Create(path)); // sets its index buffer in ctor			
+		meshBase->VertexCB = UniformBuffer::Create(&modelViewMat, sizeof(ModelViewMat), 0u, Terra::UniformBuffer::ConstantBufferType::Vertex);
+		s_FrameData.MeshMap.insert({ path, meshBase });
+	}
 
-	meshBase->VertexCB = UniformBuffer::Create(&modelViewMat, sizeof(ModelViewMat), 0u,
-		Terra::UniformBuffer::ConstantBufferType::Vertex);
-
-	meshBase->PixelCB = UniformBuffer::Create(&material, sizeof(Material), 1u,
-		Terra::UniformBuffer::ConstantBufferType::Pixel);
-	
-	s_FrameData.MeshMap.insert({ path, meshBase });
+	for (auto& childMesh : meshBase->GetChildMeshes())
+	{
+		childMesh->VertexCB = meshBase->VertexCB;  // TODO: do built up transform here
+		if (!childMesh->hasSpecular)
+		{
+			//material.color = color.has_value() ? color.value() : childMesh->color;
+			if (!childMesh->PixelCB)
+				childMesh->PixelCB = UniformBuffer::Create(&material, sizeof(Material), 1u, Terra::UniformBuffer::ConstantBufferType::Pixel);
+			else
+				childMesh->PixelCB->Update(&material, sizeof(Material));
+		}
+	}
 	s_FrameData.MeshCount++;
 }
 

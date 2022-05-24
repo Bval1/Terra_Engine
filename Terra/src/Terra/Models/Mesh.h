@@ -23,7 +23,7 @@ namespace Terra {
 
 			textures = texs;
 			color = matColor;
-			hasSpecular = hasSpec;
+			hasSpecular = hasSpec;	
 		}
 
 		Mesh(std::vector<Ref<Mesh>> childMeshes)
@@ -49,9 +49,7 @@ namespace Terra {
 	public:
 		DirectX::XMMATRIX transform;
 		DirectX::XMFLOAT4 color;
-		Ref<Texture2D> texture;
 		std::vector<Ref<Texture2D>> textures;
-		std::vector<Ref<UniformBuffer>> constantBuffers;
 		Ref<UniformBuffer> VertexCB;
 		Ref<UniformBuffer> PixelCB;
 		float specularPower = 0.0f;

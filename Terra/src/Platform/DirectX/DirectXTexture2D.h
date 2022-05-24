@@ -7,7 +7,7 @@ namespace Terra
 	class DirectXTexture2D : public Texture2D
 	{
 	public:
-		DirectXTexture2D(uint32_t width, uint32_t height);
+		DirectXTexture2D(uint32_t width, uint32_t height, uint32_t slot = 0u);
 		DirectXTexture2D(const std::string& path, uint32_t slot = 0u);
 		virtual ~DirectXTexture2D();
 

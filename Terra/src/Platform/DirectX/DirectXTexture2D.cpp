@@ -3,8 +3,8 @@
 #include "DirectXRendererAPI.h"
 #include "stb_image.h"
 
-Terra::DirectXTexture2D::DirectXTexture2D(uint32_t width, uint32_t height)
-	:m_width(width), m_height(height)
+Terra::DirectXTexture2D::DirectXTexture2D(uint32_t width, uint32_t height, uint32_t slot)
+	:m_width(width), m_height(height), m_slot(slot)
 {	
 	INFOMAN(*DirectXRendererAPI::GetDXGraphicsContext());
 	m_sampler = CreateRef<Sampler>();

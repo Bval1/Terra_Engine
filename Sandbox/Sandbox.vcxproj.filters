@@ -20,8 +20,6 @@
     <FxCompile Include="assets\shaders\D3D11\Renderer3D_VS.hlsl" />
     <FxCompile Include="assets\shaders\D3D11\Renderer3DSolid_PS.hlsl" />
     <FxCompile Include="assets\shaders\D3D11\Renderer3DSolid_VS.hlsl" />
-    <FxCompile Include="assets\shaders\D3D11\TexturePS.hlsl" />
-    <FxCompile Include="assets\shaders\D3D11\TextureVS.hlsl" />
     <FxCompile Include="assets\shaders\D3D11\VS.hlsl" />
     <FxCompile Include="assets\shaders\D3D11\Renderer3D_SpecularPS.hlsl" />
   </ItemGroup>

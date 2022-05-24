@@ -5,7 +5,7 @@ Terra::Mesh Terra::Mesh::Create(const std::string& path)
 {
 	TERRA_PROFILE_FUNCTION();
 	Assimp::Importer imp;
-	auto pModel = imp.ReadFile(path.c_str(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | 
+	auto pModel = imp.ReadFile(path.c_str(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_ConvertToLeftHanded |
 		aiProcess_GenNormals);
 
 
@@ -29,10 +29,8 @@ Terra::Mesh Terra::Mesh::Create(const std::string& path)
 
 void Terra::Mesh::ClearVertexData()
 {
-	//delete[] m_vertexData;
 	for (auto& childMesh : m_pMeshes)
 		delete[] childMesh->m_vertexData;
-
 }
 
 Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, const aiMesh* mesh, const aiMaterial* const* pMaterials)
@@ -79,9 +77,10 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 		meshColor = DirectX::XMFLOAT4( color.r, color.g, color.b, 1.f );
 		
 		aiString texFileName;
-		material.GetTexture(aiTextureType_DIFFUSE, 0, &texFileName);
-
-		textures.emplace_back(CreateRef<DirectXTexture2D>(basePath + texFileName.C_Str(), 0u));
+		if (material.GetTexture(aiTextureType_DIFFUSE, 0, &texFileName) == aiReturn_SUCCESS)
+		{
+			textures.emplace_back(CreateRef<DirectXTexture2D>(basePath + texFileName.C_Str(), 0u));
+		}
 
 		if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS)
 		{
@@ -95,8 +94,7 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 	}
 	else
 	{
-		TERRA_WARN("No materials found in mesh");
-		//diffuseTex= CreateRef<DirectXTexture2D>(1.0f, 1.0f);
+		TERRA_WARN("No materials found in mesh, MTL file may be missing");
 	}
 
 	const auto& numofElements = sizeof(Vertex) / sizeof(float);

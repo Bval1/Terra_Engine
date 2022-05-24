@@ -32,8 +32,7 @@ Terra::DirectXConstantBuffer::DirectXConstantBuffer(const void* data, uint32_t s
 	csd.pSysMem = data;
 	GFX_THROW_INFO(DirectXRendererAPI::GetDevice()->CreateBuffer(&m_ConstantBufferDesc, &csd, &pConstantBuffer));
 }
-
-
+	
 
 void Terra::DirectXConstantBuffer::Bind(uint32_t numBuffers)
 {

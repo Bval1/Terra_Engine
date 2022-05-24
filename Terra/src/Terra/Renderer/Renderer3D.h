@@ -22,7 +22,7 @@ namespace Terra
 
 		static void DrawPointLight(DirectX::XMFLOAT3& pos);
 		static void DrawPointLight(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT4& diffusecolor);
-		static void DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 0.f));
+		static void DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, std::optional<DirectX::XMFLOAT4> color);
 		
 		static void DrawCube(DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, const Ref<Texture2D>& texture = nullptr);
 		

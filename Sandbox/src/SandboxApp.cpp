@@ -57,7 +57,7 @@ public:
 
 		auto transform1 =
 			DirectX::XMMatrixScaling(2 * m_scale.x, 2 * m_scale.y, m_scale.z) *
-			DirectX::XMMatrixRotationRollPitchYaw(m_rot.x, m_rot.y, m_rot.z) *
+			DirectX::XMMatrixRotationRollPitchYaw(m_rot.x, 3.14 + m_rot.y, m_rot.z) *
 			DirectX::XMMatrixTranslation(m_pos.x + 2, m_pos.y + 2, m_pos.z);
 
 
@@ -71,10 +71,8 @@ public:
 
 
 		Terra::Renderer3D::DrawPointLight(m_lightpos);
-		int id = 1;
-		//Terra::Renderer3D::DrawMesh("assets\\models\\suzanne.obj", transform1, meshcolor, id);
-		Terra::Renderer3D::DrawMesh("assets\\models\\nano_textured\\nanosuit.obj", transform2);
-		//Terra::Renderer3D::DrawMesh("assets\\models\\Terra_logo\\Terra.obj", transform1, meshcolor);
+		Terra::Renderer3D::DrawMesh("assets\\models\\shinebox_logo\\shinebox.obj", transform1, materialConstants.color);
+		Terra::Renderer3D::DrawMesh("assets\\models\\nano_textured\\nanosuit.obj", transform2, {});
 		//Terra::Renderer3D::DrawCube(transform4, meshcolor, m_Texture);
 		//Terra::Renderer3D::DrawPlane(pos1, meshcolor, m_Texture);
 		//Terra::Renderer3D::DrawSphere(pos2, meshcolor);
@@ -115,13 +113,13 @@ private:
 	// model
 	DirectX::XMFLOAT3 m_pos = { 0.0f, 0.0f, 4.0f };
 	DirectX::XMFLOAT3 m_scale = { 1.0f, 1.0f, 1.0f };
-	DirectX::XMFLOAT3 m_rot = { 0.0f, 3.14159f, 0.0f };
+	DirectX::XMFLOAT3 m_rot = { 0.0f, 0.0f, 0.0f };
 	float m_roll = 0.0f, m_pitch = 0.0f, m_yaw = 0.0f;
 
 
 	struct PSMaterialConstant
 	{
-		DirectX::XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		DirectX::XMFLOAT4 color = { 0.8f, 0.1f, 0.1f, 1.0f };
 		float specularIntensity = 0.6f;
 		float specularPower = 30.0f;
 		float padding[2];
