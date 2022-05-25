@@ -18,8 +18,9 @@ public:
 	ExampleLayer()
 		: Layer("Example"), m_PerspectiveCamera(1.0f, 9.0f/16.0f, 0.5f, 50.0f)
 	{	
-		//m_Texture = Terra::Texture2D::Create("assets/textures/tiles.png");
+		m_TilesTex = Terra::Texture2D::Create("assets/textures/tiles.png");
 		m_Texture = Terra::Texture2D::Create("assets/textures/brickwall.jpg");
+		m_NormalTex = Terra::Texture2D::Create("assets/textures/brickwall_normal.jpg", 1u);
 		mLogoTexture = Terra::Texture2D::Create("assets/textures/sparta.png");
 		mWhiteTexture = Terra::Texture2D::Create(1u, 1u);
 
@@ -52,7 +53,7 @@ public:
 		Terra::RenderCommand::Clear();
 		DirectX::XMFLOAT4 whitecolor= { 1.0f, 1.0f, 1.0f, 1.0f };
 		DirectX::XMFLOAT3 lightpos = { 0.0f, 0.0f, 4.0f };
-		DirectX::XMFLOAT3 pos1 = { 2.0f, 2.0f, 8.0f };
+		DirectX::XMFLOAT3 pos1 = { 5.0f, 2.0f, 1.0f };
 		DirectX::XMFLOAT3 pos2 = { 5.0f, 4.0f, 0.0f };
 
 		auto transform1 =
@@ -73,9 +74,10 @@ public:
 		Terra::Renderer3D::DrawPointLight(m_lightpos);
 		Terra::Renderer3D::DrawMesh("assets\\models\\shinebox_logo\\shinebox.obj", transform1, materialConstants.color);
 		Terra::Renderer3D::DrawMesh("assets\\models\\nano_textured\\nanosuit.obj", transform2, {});
-		//Terra::Renderer3D::DrawCube(transform4, meshcolor, m_Texture);
-		Terra::Renderer3D::DrawPlane(pos1, c, m_Texture);
-		//Terra::Renderer3D::DrawSphere(pos2, meshcolor);
+		Terra::Renderer3D::DrawCube(transform1, meshcolor, mLogoTexture);
+		Terra::Renderer3D::DrawPlane(pos1, c, m_Texture, m_NormalTex);
+		Terra::Renderer3D::DrawPlane(pos2, c, m_TilesTex);
+		Terra::Renderer3D::DrawSphere({ 4.0, -2.0f, 0.0f }, meshcolor);
 		Terra::Renderer3D::EndScene();
 	}
 
@@ -104,9 +106,9 @@ public:
 
 private:
 	Terra::PointLight pointLight;
-	DirectX::XMFLOAT3 m_lightpos = { 0.0f, 0.0f, 4.0f };
+	DirectX::XMFLOAT3 m_lightpos = { 0.0f, 0.0f, 0.0f };
 
-	Terra::Ref<Terra::Texture2D> m_Texture, m_AlphaTexture, mLogoTexture, mWhiteTexture;
+	Terra::Ref<Terra::Texture2D> m_Texture, m_NormalTex, m_AlphaTexture, mLogoTexture, mWhiteTexture, m_TilesTex;
 
 	Terra::PerspectiveCamera m_PerspectiveCamera;
 

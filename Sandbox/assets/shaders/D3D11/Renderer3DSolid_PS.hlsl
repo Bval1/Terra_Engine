@@ -15,13 +15,12 @@ cbuffer ObjectCBuf  // set per object for each object rendered, use slot 1
     float4 materialColor;
     float specularIntensity;
     float specularPower;
-    int entityID;
+    float padding[2];
 };
 
 float4 main(float3 worldPos : Position, float3 n : Normal) : SV_TARGET
 {
-    const int a = entityID;
-    
+
     const float3 vToL = lightPos - worldPos;  // vector to light
     const float distToL = length(vToL);     // magnitude of above
     const float dirToL = vToL / distToL;    // normalized vector to light

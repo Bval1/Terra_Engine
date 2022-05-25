@@ -37,7 +37,14 @@ namespace Terra
 		DirectX::XMMATRIX transform;
 		DirectX::XMFLOAT4 color;
 		Ref<Texture2D> texture;
-		std::vector<Ref<UniformBuffer>> constantBuffers;
+		std::unordered_map<std::string, Ref<UniformBuffer>> constantBuffers;
+		struct Material
+		{
+			DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			float specularIntensity = 0.8f;
+			float specularPower = 30.0f;
+			float padding[2];
+		} material;
 
 	protected:
 		float* m_vertexData;

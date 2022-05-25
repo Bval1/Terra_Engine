@@ -1,6 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include "Model.h"
+
 namespace Terra {
 
 	class Plane : public Model
@@ -26,9 +27,17 @@ namespace Terra {
 
 	public:
 		DirectX::XMMATRIX transform;
-		DirectX::XMFLOAT4 color;
-		Ref<Texture2D> texture;
-		std::vector<Ref<UniformBuffer>> constantBuffers;
+		std::unordered_map<std::string, const Ref<Texture2D>> textures;
+		std::unordered_map<std::string, Ref<UniformBuffer>> constantBuffers;
+		struct Material
+		{
+			//DirectX::XMFLOAT4 color;
+			float specularIntensity = 0.8f;
+			float specularPower = 30.0f;
+			BOOL hasNormalMap = TRUE;	// win32 BOOL is 4 bytes
+			float padding[1];
+
+		} material;
 
 	protected:
 		float* m_vertexData;

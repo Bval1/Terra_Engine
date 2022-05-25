@@ -24,12 +24,12 @@ namespace Terra
 		static void DrawPointLight(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT4& diffusecolor);
 		static void DrawMesh(const std::string& path, DirectX::XMMATRIX& transform, std::optional<DirectX::XMFLOAT4> color);
 		
-		static void DrawCube(DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, const Ref<Texture2D>& texture = nullptr);
+		static void DrawCube(DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, const Ref<Texture2D> texture = nullptr);
 		
-		static void DrawPlane(DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& color, const Ref<Texture2D>& texture = nullptr);
-		static void DrawPlane(DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, const Ref<Texture2D>& texture = nullptr);
+		static void DrawPlane(DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& color, const Ref<Texture2D> diffusetex = nullptr, const Ref<Texture2D> normaltex = nullptr);
+		static void DrawPlane(DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color, const Ref<Texture2D> diffuse = nullptr, const Ref<Texture2D> normaltex = nullptr);
 		
-		static void DrawSphere(DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& color);
+		static void DrawSphere(DirectX::XMFLOAT3 position, DirectX::XMFLOAT4& color);
 		static void DrawSphere(DirectX::XMMATRIX& transform, DirectX::XMFLOAT4& color);
 	};
 }
