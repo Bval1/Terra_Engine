@@ -81,6 +81,11 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 		{
 			textures.emplace_back(CreateRef<DirectXTexture2D>(basePath + texFileName.C_Str(), 0u));
 		}
+		else
+		{
+			// creates a white texture if no diffuse tex present
+			textures.emplace_back(CreateRef<DirectXTexture2D>(1u, 1u));
+		}
 
 		if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS)
 		{
@@ -94,7 +99,7 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 	}
 	else
 	{
-		TERRA_WARN("No materials found in mesh, MTL file may be missing");
+		TERRA_WARN("No materials found in mesh directory, MTL file may be missing");
 	}
 
 	const auto& numofElements = sizeof(Vertex) / sizeof(float);

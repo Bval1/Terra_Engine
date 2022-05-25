@@ -18,11 +18,11 @@ public:
 	ExampleLayer()
 		: Layer("Example"), m_PerspectiveCamera(1.0f, 9.0f/16.0f, 0.5f, 50.0f)
 	{	
-#if 0
-		m_Texture = Terra::Texture2D::Create("assets/textures/tiles.png");
+		//m_Texture = Terra::Texture2D::Create("assets/textures/tiles.png");
+		m_Texture = Terra::Texture2D::Create("assets/textures/brickwall.jpg");
 		mLogoTexture = Terra::Texture2D::Create("assets/textures/sparta.png");
 		mWhiteTexture = Terra::Texture2D::Create(1u, 1u);
-#endif
+
 	}
 
 
@@ -52,7 +52,7 @@ public:
 		Terra::RenderCommand::Clear();
 		DirectX::XMFLOAT4 whitecolor= { 1.0f, 1.0f, 1.0f, 1.0f };
 		DirectX::XMFLOAT3 lightpos = { 0.0f, 0.0f, 4.0f };
-		DirectX::XMFLOAT3 pos1 = { 2.0f, 2.0f, 0.0f };
+		DirectX::XMFLOAT3 pos1 = { 2.0f, 2.0f, 8.0f };
 		DirectX::XMFLOAT3 pos2 = { 5.0f, 4.0f, 0.0f };
 
 		auto transform1 =
@@ -68,13 +68,13 @@ public:
 
 		
 		auto meshcolor = materialConstants.color;
-
+		DirectX::XMFLOAT4 c = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		Terra::Renderer3D::DrawPointLight(m_lightpos);
 		Terra::Renderer3D::DrawMesh("assets\\models\\shinebox_logo\\shinebox.obj", transform1, materialConstants.color);
 		Terra::Renderer3D::DrawMesh("assets\\models\\nano_textured\\nanosuit.obj", transform2, {});
 		//Terra::Renderer3D::DrawCube(transform4, meshcolor, m_Texture);
-		//Terra::Renderer3D::DrawPlane(pos1, meshcolor, m_Texture);
+		Terra::Renderer3D::DrawPlane(pos1, c, m_Texture);
 		//Terra::Renderer3D::DrawSphere(pos2, meshcolor);
 		Terra::Renderer3D::EndScene();
 	}

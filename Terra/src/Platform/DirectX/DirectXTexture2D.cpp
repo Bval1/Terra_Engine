@@ -13,7 +13,7 @@ Terra::DirectXTexture2D::DirectXTexture2D(uint32_t width, uint32_t height, uint3
 	textureDesc.Height = m_height;
 	textureDesc.MipLevels = 1; // 1 = no mip mapping
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;	// same as backbuffer
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	// same as backbuffer
 	textureDesc.SampleDesc.Count = 1;	 // 1 = no aa
 	textureDesc.SampleDesc.Quality = 0;	// 0 = no aa
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -47,8 +47,8 @@ Terra::DirectXTexture2D::DirectXTexture2D(const std::string& path, uint32_t slot
 
 	INFOMAN(*DirectXRendererAPI::GetDXGraphicsContext());
 	
-	wchar_t wideName[512];
-	mbstowcs_s(nullptr, wideName, path.c_str(), _TRUNCATE);
+	//wchar_t wideName[512];
+	//mbstowcs_s(nullptr, wideName, path.c_str(), _TRUNCATE);
 	GetImageData(path);
 	
 	m_sampler = CreateRef<Sampler>();
@@ -59,7 +59,7 @@ Terra::DirectXTexture2D::DirectXTexture2D(const std::string& path, uint32_t slot
 	textureDesc.Height = m_height;
 	textureDesc.MipLevels = 1; // 1 = no mip mapping
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;	// same as backbuffer
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	// same as backbuffer
 	textureDesc.SampleDesc.Count = 1;	 // 1 = no aa
 	textureDesc.SampleDesc.Quality = 0;	// 0 = no aa
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;

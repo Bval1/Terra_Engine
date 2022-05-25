@@ -185,28 +185,30 @@ void Terra::Renderer3D::Flush()
 	s_FrameData.Light->Bind(cameraData.ViewMatrix);
 	
 	// Cube
-	s_FrameData.TexMeshVertexBuffer->SetData(s_FrameData.Cube->VertexData(), s_FrameData.Cube->VertexDataSize());
-	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexMeshVertexBuffer);
-	s_FrameData.VertexArray->SetIndexBuffer(s_FrameData.Cube->GetIndexBuffer());
-	
-	if (s_FrameData.Cube->texture)
-		s_FrameData.Cube->texture->Bind();
-	else
-		s_FrameData.WhiteTexture->Bind();
-	
-	s_FrameData.TexturedPhongVS->Bind();
-	s_FrameData.TexturedPhongPS->Bind();
-	s_FrameData.VertexArray->Bind();
-	for (size_t i = 0; i < s_FrameData.Cube->constantBuffers.size();)
+	if (s_FrameData.CubeCount)
 	{
+		s_FrameData.TexMeshVertexBuffer->SetData(s_FrameData.Cube->VertexData(), s_FrameData.Cube->VertexDataSize());
+		s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexMeshVertexBuffer);
+		s_FrameData.VertexArray->SetIndexBuffer(s_FrameData.Cube->GetIndexBuffer());
 
-		s_FrameData.Cube->constantBuffers[i]->Bind();
-		s_FrameData.Cube->constantBuffers[i + 1]->Bind();
-		RenderCommand::DrawIndexed(s_FrameData.VertexArray);
-		i += CB_count;
+		if (s_FrameData.Cube->texture)
+			s_FrameData.Cube->texture->Bind();
+		else
+			s_FrameData.WhiteTexture->Bind();
+
+		s_FrameData.TexturedPhongVS->Bind();
+		s_FrameData.TexturedPhongPS->Bind();
+		s_FrameData.VertexArray->Bind();
+		for (size_t i = 0; i < s_FrameData.Cube->constantBuffers.size();)
+		{
+
+			s_FrameData.Cube->constantBuffers[i]->Bind();
+			s_FrameData.Cube->constantBuffers[i + 1]->Bind();
+			RenderCommand::DrawIndexed(s_FrameData.VertexArray);
+			i += CB_count;
+		}
+		s_FrameData.Cube->constantBuffers.clear();
 	}
-	s_FrameData.Cube->constantBuffers.clear();
-
 	// Plane
 	s_FrameData.TexMeshVertexBuffer->SetData(s_FrameData.Plane->VertexData(), s_FrameData.Plane->VertexDataSize());
 	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexMeshVertexBuffer);
@@ -265,8 +267,10 @@ void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular)
 	s_FrameData.VertexArray->SetIndexBuffer(mesh->GetIndexBuffer());
 	for (const auto& tex : mesh->textures)
 	{
-		if(tex)
+		if (tex)
+		{
 			tex->Bind();
+		}
 	}
 
 	s_FrameData.TexturedPhongVS->Bind();
@@ -325,9 +329,10 @@ void Terra::Renderer3D::DrawPointLight(DirectX::XMFLOAT3& pos)
 
 	pointlight->constantBuffers.emplace_back(UniformBuffer::Create(&modelViewMat, sizeof(ModelViewMat), 0u,
 		Terra::UniformBuffer::ConstantBufferType::Vertex));
-
+	
+	// bind to slot 1 so it doesn't override lightcbuf in other pixel shaders
 	const auto colordata = pointlight->GetDiffuseColor();
-	pointlight->constantBuffers.emplace_back(UniformBuffer::Create(&colordata, sizeof(colordata), 0u,
+	pointlight->constantBuffers.emplace_back(UniformBuffer::Create(&colordata, sizeof(colordata), 1u,
 		Terra::UniformBuffer::ConstantBufferType::Pixel));
 }
 
