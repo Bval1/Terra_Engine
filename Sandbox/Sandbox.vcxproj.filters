@@ -16,12 +16,12 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\D3D11\PS.hlsl" />
-    <FxCompile Include="assets\shaders\D3D11\Renderer3D_PS.hlsl" />
-    <FxCompile Include="assets\shaders\D3D11\Renderer3D_VS.hlsl" />
-    <FxCompile Include="assets\shaders\D3D11\Renderer3DSolid_PS.hlsl" />
-    <FxCompile Include="assets\shaders\D3D11\Renderer3DSolid_VS.hlsl" />
+    <FxCompile Include="assets\shaders\D3D11\PhongPS.hlsl" />
+    <FxCompile Include="assets\shaders\D3D11\PhongVS.hlsl" />
+    <FxCompile Include="assets\shaders\D3D11\NoTexPS.hlsl" />
+    <FxCompile Include="assets\shaders\D3D11\NoTexVS.hlsl" />
     <FxCompile Include="assets\shaders\D3D11\VS.hlsl" />
-    <FxCompile Include="assets\shaders\D3D11\Renderer3D_SpecularPS.hlsl" />
+    <FxCompile Include="assets\shaders\D3D11\SpecularPS.hlsl" />
     <FxCompile Include="assets\shaders\D3D11\NormalMapPS.hlsl" />
   </ItemGroup>
   <ItemGroup>

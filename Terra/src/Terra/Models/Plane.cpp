@@ -12,19 +12,19 @@ Terra::Plane Terra::Plane::Create()
 
 	std::vector<Vertex> vertices(4);
 	vertices[0].pos =	{ -0.75f, -0.75f, 0.0f };
-	vertices[0].n =		{ 0.0f, 0.0f, 1.0f };
+	vertices[0].n =		{ 0.0f, 0.0f, -1.0f };
 	vertices[0].tex =	{ 0.0f, 0.0f };
 	
 	vertices[1].pos =	{ 0.75f, -0.75f, 0.0f };
-	vertices[1].n =		{ 0.0f, 0.0f, 1.0f };
+	vertices[1].n =		{ 0.0f, 0.0f, -1.0f };
 	vertices[1].tex =	{ 1.0f, 0.0f };
 	
 	vertices[2].pos =	{ 0.75f, 0.75f, 0.0f };
-	vertices[2].n =		{ 0.0f, 0.0f, 1.0f };
+	vertices[2].n =		{ 0.0f, 0.0f, -1.0f };
 	vertices[2].tex =	{ 0.0f, 1.0f };
 	
 	vertices[3].pos =	{ -0.75f, 0.75f, 0.0f };
-	vertices[3].n =		{ 0.0f, 0.0f, 1.0f };
+	vertices[3].n =		{ 0.0f, 0.0f, -1.0f };
 	vertices[3].tex =	{ 1.0f, 1.0f };
 	
 	

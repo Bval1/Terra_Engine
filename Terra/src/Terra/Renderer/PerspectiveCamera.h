@@ -44,7 +44,8 @@ namespace Terra
 		float m_Near = 0.5f, m_Far = 50.0f;
 		
 		// camera transform
-		DirectX::XMFLOAT3 m_position = { 0.0f, 0.0f, -5.0f };
+		DirectX::XMFLOAT3 m_position = { 0.0f, 7.5f, -18.0f };
+		//DirectX::XMFLOAT3 m_position = { 0.0f, 0.0f, -5.0f };
 		float m_roll = 0.0f, m_pitch = 0.0f, m_yaw = 0.0f;
 
 		float m_ViewportWidth = 1280.0f, m_ViewportHeight = 720.0f;

@@ -100,9 +100,7 @@ void Terra::PerspectiveCamera::Reset()
 
 void Terra::PerspectiveCamera::UpdateProjection()
 {
-	float horizontalFOV = m_ViewWidth;
-	float aspectRatio = m_ViewHeight / m_ViewWidth;
-	m_CameraProjectionMatrix = DirectX::XMMatrixPerspectiveLH(horizontalFOV, aspectRatio, m_Near, m_Far);
+	m_CameraProjectionMatrix = DirectX::XMMatrixPerspectiveLH(m_ViewWidth, m_ViewHeight, m_Near, m_Far);
 }
 
 

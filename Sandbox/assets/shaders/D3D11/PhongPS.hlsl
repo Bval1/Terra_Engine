@@ -30,7 +30,7 @@ float4 main(float3 worldPos : Position, float3 n : Normal, float2 tc : Texcoord)
     // fragment to light vector data
     const float3 vToL = lightPos - worldPos; // vector to light
     const float3 distToL = length(vToL); // magnitude of above
-    const float dirToL = vToL / distToL; // normalized vector to light
+    const float3 dirToL = vToL / distToL; // normalized vector to light
 
     // attenuation
     const float att = 1.0f / (attConstant + attLinear * distToL + attQuadratic * (distToL * distToL));

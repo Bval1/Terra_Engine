@@ -30,12 +30,11 @@ void Terra::PointLight::Bind(const DirectX::XMMATRIX& viewMatrix) const
 		m_attQuadratic
 	};
 	auto temp = m_cbData;
-	DirectX::XMStoreFloat3(&m_cbData.pos, DirectX::XMVector3Transform(DirectX::XMLoadFloat3(&m_pos), viewMatrix));
+	DirectX::XMStoreFloat3(&temp.pos, DirectX::XMVector3Transform(DirectX::XMLoadFloat3(&m_cbData.pos), viewMatrix));
+	
 	// update with light position view matrix
-	m_pointLightCBuf->Update(&m_cbData, sizeof(m_cbData));
+	m_pointLightCBuf->Update(&temp, sizeof(temp));
 	m_pointLightCBuf->Bind();
-	// store back original light position so it can be used to make light's own transform cbuf
-	m_cbData = temp;
 	
 }
 
@@ -65,7 +64,7 @@ DirectX::XMMATRIX Terra::PointLight::GetTransformMatrix() const
 {
 	return std::move(
 		DirectX::XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z) *
-		//DirectX::XMMatrixRotationRollPitchYaw(m_rot.x, m_rot.y, m_rot.z) *
+		DirectX::XMMatrixRotationRollPitchYaw(m_rot.x, m_rot.y, m_rot.z) *
 		DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z) 
 		);
 }

@@ -52,8 +52,8 @@ public:
 		Terra::RenderCommand::SetClearColor({ 0.07f, 0.0f, 0.12f, 1.0f });
 		Terra::RenderCommand::Clear();
 		DirectX::XMFLOAT4 whitecolor= { 1.0f, 1.0f, 1.0f, 1.0f };
-		DirectX::XMFLOAT3 lightpos = { 0.0f, 0.0f, 4.0f };
-		DirectX::XMFLOAT3 pos1 = { 5.0f, 2.0f, 1.0f };
+		DirectX::XMFLOAT3 lightpos = { 1.5f,14.0f,-4.5f };
+		DirectX::XMFLOAT3 pos1 = { -5.0f, 17.0f, -1.0f };
 		DirectX::XMFLOAT3 pos2 = { 5.0f, 4.0f, 0.0f };
 
 		auto transform1 =
@@ -65,19 +65,23 @@ public:
 		auto transform2 =
 			DirectX::XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z) *
 			DirectX::XMMatrixRotationRollPitchYaw(m_rot.x, m_rot.y, m_rot.z) *
-			DirectX::XMMatrixTranslation(m_pos.x, m_pos.y - 10, m_pos.z + 5);
+			DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
 
+		auto transform3 =
+			DirectX::XMMatrixScaling(2.0f * m_scale.x, 2.0f* m_scale.y, 2.0f* m_scale.z) *
+			DirectX::XMMatrixRotationRollPitchYaw(m_rot.x, 3.14159f, m_rot.z) *
+			DirectX::XMMatrixTranslation(5.0f, 10.0f, 0.0f);
 		
 		auto meshcolor = materialConstants.color;
 		DirectX::XMFLOAT4 c = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		Terra::Renderer3D::DrawPointLight(m_lightpos);
-		Terra::Renderer3D::DrawMesh("assets\\models\\shinebox_logo\\shinebox.obj", transform1, materialConstants.color);
+		//Terra::Renderer3D::DrawMesh("assets\\models\\shinebox_logo\\shinebox.obj", transform1, materialConstants.color);
 		Terra::Renderer3D::DrawMesh("assets\\models\\nano_textured\\nanosuit.obj", transform2, {});
-		Terra::Renderer3D::DrawCube(transform1, meshcolor, mLogoTexture);
-		Terra::Renderer3D::DrawPlane(pos1, c, m_Texture, m_NormalTex);
-		Terra::Renderer3D::DrawPlane(pos2, c, m_TilesTex);
-		Terra::Renderer3D::DrawSphere({ 4.0, -2.0f, 0.0f }, meshcolor);
+		//Terra::Renderer3D::DrawCube(transform1, meshcolor, mLogoTexture);
+		Terra::Renderer3D::DrawPlane(transform3, c, m_Texture, m_NormalTex);
+		//Terra::Renderer3D::DrawPlane(pos2, c, m_TilesTex);
+		//Terra::Renderer3D::DrawSphere({ 4.0, -2.0f, 0.0f }, meshcolor);
 		Terra::Renderer3D::EndScene();
 	}
 
@@ -92,7 +96,7 @@ public:
 		ImGui::SliderAngle("X Rotation", &m_rot.x); 
 		ImGui::SliderAngle("Y Rotation", &m_rot.y);
 		ImGui::SliderAngle("Z Rotation", &m_rot.z);
-		ImGui::DragFloat3("Light Position", &m_lightpos.x, 0.01, -100.0f, 100.0f);
+		ImGui::DragFloat3("Light Position", &m_lightpos.x, 0.1f, -100.0f, 100.0f);
 		ImGui::End();
 
 		pointLight.RenderControlWindow();
@@ -106,14 +110,14 @@ public:
 
 private:
 	Terra::PointLight pointLight;
-	DirectX::XMFLOAT3 m_lightpos = { 0.0f, 0.0f, 0.0f };
+	DirectX::XMFLOAT3 m_lightpos = { 1.5f,14.0f,-4.5f };
 
 	Terra::Ref<Terra::Texture2D> m_Texture, m_NormalTex, m_AlphaTexture, mLogoTexture, mWhiteTexture, m_TilesTex;
 
 	Terra::PerspectiveCamera m_PerspectiveCamera;
 
 	// model
-	DirectX::XMFLOAT3 m_pos = { 0.0f, 0.0f, 4.0f };
+	DirectX::XMFLOAT3 m_pos = { 0.0f, 0.0f, 0.0f };
 	DirectX::XMFLOAT3 m_scale = { 1.0f, 1.0f, 1.0f };
 	DirectX::XMFLOAT3 m_rot = { 0.0f, 0.0f, 0.0f };
 	float m_roll = 0.0f, m_pitch = 0.0f, m_yaw = 0.0f;

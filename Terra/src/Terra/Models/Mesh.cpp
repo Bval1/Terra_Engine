@@ -94,7 +94,7 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 		}
 		else
 		{
-			material.Get(AI_MATKEY_SHININESS, shine);
+			material.Get(AI_MATKEY_SHININESS, shine);  // uses this value when no spec map is present
 		}
 	}
 	else
@@ -106,5 +106,5 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 
 	
 	return Terra::CreateRef<Mesh>(vertices.data(), numofElements * vertices.size(), indices.data(),
-		indices.size(), textures, meshColor, hasSpecular);
+		indices.size(), textures, meshColor, shine, hasSpecular);
 }

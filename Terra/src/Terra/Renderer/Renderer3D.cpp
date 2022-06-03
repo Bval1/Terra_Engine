@@ -18,19 +18,19 @@ namespace Terra {
 		uint32_t PlaneCount = 0u;
 		uint32_t SphereCount = 0u;
 		
-		Ref<VertexBuffer> SolidMeshVertexBuffer;	// these meshes have no uv coordinates defined
-		Ref<VertexBuffer> TexMeshVertexBuffer;
+		Ref<VertexBuffer> NoTexVertexBuffer;	// these meshes have no uv coordinates defined
+		Ref<VertexBuffer> TexVertexBuffer;
 		Ref<VertexBuffer> LightVertexBuffer;
 		Ref<VertexArray> VertexArray;
 		
-		Ref<Shader> TexturedPhongVS;
-		Ref<Shader> TexturedPhongPS;
+		Ref<Shader> PhongVS;
+		Ref<Shader> PhongPS;
 		Ref<Shader> NormalMapPhongPS;
 
 		Ref<Shader> SpecularPhongPS;
 
-		Ref<Shader> SolidPhongVS;
-		Ref<Shader> SolidPhongPS;
+		Ref<Shader> NoTexPhongVS;
+		Ref<Shader> NoTexPhongPS;
 
 		Ref<Shader> BasicVS;
 		Ref<Shader> BasicPS;
@@ -67,13 +67,13 @@ void Terra::Renderer3D::Init()
 	TERRA_PROFILE_FUNCTION();
 
 	s_FrameData.VertexArray = VertexArray::Create();
-	s_FrameData.TexturedPhongVS = Shader::Create(L"assets/shaders/D3D11/output/Renderer3D_VS.cso", Terra::ShaderType::Vertex);
-	s_FrameData.TexturedPhongPS = Shader::Create(L"assets/shaders/D3D11/output/Renderer3D_PS.cso", Terra::ShaderType::Pixel);
-	s_FrameData.SpecularPhongPS = Shader::Create(L"assets/shaders/D3D11/output/Renderer3D_SpecularPS.cso", Terra::ShaderType::Pixel);
+	s_FrameData.PhongVS = Shader::Create(L"assets/shaders/D3D11/output/PhongVS.cso", Terra::ShaderType::Vertex);
+	s_FrameData.PhongPS = Shader::Create(L"assets/shaders/D3D11/output/PhongPS.cso", Terra::ShaderType::Pixel);
+	s_FrameData.SpecularPhongPS = Shader::Create(L"assets/shaders/D3D11/output/SpecularPS.cso", Terra::ShaderType::Pixel);
 	s_FrameData.NormalMapPhongPS = Shader::Create(L"assets/shaders/D3D11/output/NormalMapPS.cso", Terra::ShaderType::Pixel);
 
-	s_FrameData.SolidPhongVS = Shader::Create(L"assets/shaders/D3D11/output/Renderer3DSolid_VS.cso", Terra::ShaderType::Vertex);
-	s_FrameData.SolidPhongPS = Shader::Create(L"assets/shaders/D3D11/output/Renderer3DSolid_PS.cso", Terra::ShaderType::Pixel);
+	s_FrameData.NoTexPhongVS = Shader::Create(L"assets/shaders/D3D11/output/NoTexVS.cso", Terra::ShaderType::Vertex);
+	s_FrameData.NoTexPhongPS = Shader::Create(L"assets/shaders/D3D11/output/NoTexPS.cso", Terra::ShaderType::Pixel);
 	s_FrameData.BasicVS = Shader::Create(L"assets/shaders/D3D11/output/VS.cso", Terra::ShaderType::Vertex);
 	s_FrameData.BasicPS = Shader::Create(L"assets/shaders/D3D11/output/PS.cso", Terra::ShaderType::Pixel);
 	
@@ -91,29 +91,29 @@ void Terra::Renderer3D::Init()
 
 	// Init Solid Models
 	s_FrameData.Sphere = std::make_unique<Sphere>(Sphere::CreateTesselatedNormalized(12, 24));
-	s_FrameData.SolidMeshVertexBuffer = VertexBuffer::Create(sizeof(VertexBuffer)); // will resize when setting data
+	s_FrameData.NoTexVertexBuffer = VertexBuffer::Create(sizeof(VertexBuffer)); // will resize when setting data
 	BufferLayout layout = 
 	{
 		{"Position", 0, Terra::ShaderDataType::Float3, 0, 0, 0, 0},
 		{"Normal", 0, Terra::ShaderDataType::Float3, 0, 12, 0, 0},
 	};
-	layout.SetVertexShader(s_FrameData.SolidPhongVS);
-	s_FrameData.SolidMeshVertexBuffer->SetLayout(layout);
+	layout.SetVertexShader(s_FrameData.NoTexPhongVS);
+	s_FrameData.NoTexVertexBuffer->SetLayout(layout);
 
 
 	// Init Textured Models
 	s_FrameData.Cube = std::make_unique<Cube>(Cube::Create());
 	s_FrameData.Plane = std::make_unique<Plane>(Plane::Create());
 
-	s_FrameData.TexMeshVertexBuffer = VertexBuffer::Create(sizeof(VertexBuffer));
+	s_FrameData.TexVertexBuffer = VertexBuffer::Create(sizeof(VertexBuffer));
 	BufferLayout layout_textured =
 	{
 		{"Position", 0, Terra::ShaderDataType::Float3, 0, 0, 0, 0},
 		{"Normal", 0, Terra::ShaderDataType::Float3, 0, 12, 0, 0},
 		{"TexCoord", 0, Terra::ShaderDataType::Float2, 0, 24, 0, 0}
 	};
-	layout_textured.SetVertexShader(s_FrameData.TexturedPhongVS);
-	s_FrameData.TexMeshVertexBuffer->SetLayout(layout_textured);
+	layout_textured.SetVertexShader(s_FrameData.PhongVS);
+	s_FrameData.TexVertexBuffer->SetLayout(layout_textured);
 	
 	
 	s_FrameData.WhiteTexture = Texture2D::Create(1u, 1u);
@@ -182,12 +182,12 @@ void Terra::Renderer3D::Flush()
 	// Cube
 	if (s_FrameData.CubeCount)
 	{
-		s_FrameData.TexMeshVertexBuffer->SetData(s_FrameData.Cube->VertexData(), s_FrameData.Cube->VertexDataSize());
-		s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexMeshVertexBuffer);
+		s_FrameData.TexVertexBuffer->SetData(s_FrameData.Cube->VertexData(), s_FrameData.Cube->VertexDataSize());
+		s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexVertexBuffer);
 		s_FrameData.VertexArray->SetIndexBuffer(s_FrameData.Cube->GetIndexBuffer());
 
-		s_FrameData.TexturedPhongVS->Bind();
-		s_FrameData.TexturedPhongPS->Bind();
+		s_FrameData.PhongVS->Bind();
+		s_FrameData.PhongPS->Bind();
 		s_FrameData.VertexArray->Bind();
 
 		if (s_FrameData.Cube->textures.empty())
@@ -204,30 +204,34 @@ void Terra::Renderer3D::Flush()
 		}
 	}
 	// Plane
-	s_FrameData.TexMeshVertexBuffer->SetData(s_FrameData.Plane->VertexData(), s_FrameData.Plane->VertexDataSize());
-	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexMeshVertexBuffer);
+	s_FrameData.TexVertexBuffer->SetData(s_FrameData.Plane->VertexData(), s_FrameData.Plane->VertexDataSize());
+	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexVertexBuffer);
 	s_FrameData.VertexArray->SetIndexBuffer(s_FrameData.Plane->GetIndexBuffer());
-	s_FrameData.TexturedPhongVS->Bind();
+	s_FrameData.PhongVS->Bind();
 	s_FrameData.NormalMapPhongPS->Bind();
 	s_FrameData.VertexArray->Bind();
 
-	const auto& texDict = s_FrameData.Plane->textures;
+	const auto& texMap = s_FrameData.Plane->textures;
 	for (size_t i = 0; i < s_FrameData.PlaneCount; i++)
 	{
 
-		if (texDict.empty())
+		if (texMap.empty())
 		{
 			s_FrameData.WhiteTexture->Bind();
 		}
 		else
 		{
-			texDict.at("diffuse" + std::to_string(i))->Bind();
-			if (texDict.find("normal" + std::to_string(i)) != texDict.end())
-				texDict.at("normal" + std::to_string(i))->Bind();
+			texMap.at("diffuse" + std::to_string(i))->Bind();
+			if (texMap.find("normal" + std::to_string(i)) != texMap.end())
+			{
+				texMap.at("normal" + std::to_string(i))->Bind();
+				s_FrameData.Plane->constantBuffers.at("PTCB" + std::to_string(i))->Bind();	// Pixel transform cbuf needed for correct normal mapping
+			}
 		}
 	
 		s_FrameData.Plane->constantBuffers.at("TCB" + std::to_string(i))->Bind();
 		s_FrameData.Plane->constantBuffers.at("PCB" + std::to_string(i))->Bind();
+		
 		RenderCommand::DrawIndexed(s_FrameData.VertexArray);
 	}
 
@@ -243,12 +247,12 @@ void Terra::Renderer3D::Flush()
 	// Sphere
 	if (s_FrameData.SphereCount)
 	{
-		s_FrameData.SolidMeshVertexBuffer->SetData(s_FrameData.Sphere->VertexData(), s_FrameData.Sphere->VertexDataSize());
-		s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.SolidMeshVertexBuffer);
+		s_FrameData.NoTexVertexBuffer->SetData(s_FrameData.Sphere->VertexData(), s_FrameData.Sphere->VertexDataSize());
+		s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.NoTexVertexBuffer);
 		s_FrameData.VertexArray->SetIndexBuffer(s_FrameData.Sphere->GetIndexBuffer());
 
-		s_FrameData.SolidPhongVS->Bind();
-		s_FrameData.SolidPhongPS->Bind();
+		s_FrameData.NoTexPhongVS->Bind();
+		s_FrameData.NoTexPhongPS->Bind();
 		s_FrameData.VertexArray->Bind();
 		for (size_t i = 0; i < s_FrameData.SphereCount; i++)
 		{
@@ -262,8 +266,8 @@ void Terra::Renderer3D::Flush()
 
 void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular)
 {
-	s_FrameData.TexMeshVertexBuffer->SetData(mesh->VertexData(), mesh->VertexDataSize());
-	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexMeshVertexBuffer);
+	s_FrameData.TexVertexBuffer->SetData(mesh->VertexData(), mesh->VertexDataSize());
+	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexVertexBuffer);
 	s_FrameData.VertexArray->SetIndexBuffer(mesh->GetIndexBuffer());
 	for (const auto& tex : mesh->textures)
 	{
@@ -273,10 +277,13 @@ void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular)
 		}
 	}
 
-	s_FrameData.TexturedPhongVS->Bind();
+	s_FrameData.PhongVS->Bind();
 	
 	if (!hasSpecular)
-		s_FrameData.TexturedPhongPS->Bind();
+	{
+		s_FrameData.NormalMapPhongPS->Bind();
+		//s_FrameData.PhongPS->Bind();
+	}
 	else
 		s_FrameData.SpecularPhongPS->Bind();
 
@@ -289,6 +296,7 @@ void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular)
 	if (!hasSpecular)
 	{
 		mesh->PixelCB->Bind();
+		mesh->PixelCB2->Bind();
 	}
 
 	RenderCommand::DrawIndexed(s_FrameData.VertexArray); 
@@ -361,14 +369,30 @@ void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& tra
 	for (auto& childMesh : meshBase->GetChildMeshes())
 	{
 		childMesh->VertexCB = meshBase->VertexCB;  // TODO: do built up transform here
-		if (!childMesh->hasSpecular)
+		if (!childMesh->hasSpecular)  // only use this material when no spec map is present 
 		{
 			//material.color = color.has_value() ? color.value() : childMesh->color;
+			material.specularPower = childMesh->specularPower;
 			if (!childMesh->PixelCB)
+			{
+				
 				childMesh->PixelCB = UniformBuffer::Create(&material, sizeof(Material), 1u, Terra::UniformBuffer::ConstantBufferType::Pixel);
+			}
 			else
+			{
 				childMesh->PixelCB->Update(&material, sizeof(Material));
+			}
 		}
+
+		if (!childMesh->PixelCB2)
+		{
+			childMesh->PixelCB2 = UniformBuffer::Create(&modelViewMat, sizeof(ModelViewMat), 2u, Terra::UniformBuffer::ConstantBufferType::Pixel);
+		}
+		else
+		{
+			childMesh->PixelCB2->Update(&modelView, sizeof(ModelViewMat));
+		}
+	
 	}
 	s_FrameData.MeshCount++;
 }
@@ -401,11 +425,9 @@ void Terra::Renderer3D::DrawCube(DirectX::XMMATRIX& transform, DirectX::XMFLOAT4
 
 void Terra::Renderer3D::DrawPlane(DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& color, const Ref<Texture2D> difftexture, const Ref<Texture2D> normaltex)
 {
-	DirectX::XMMATRIX transform = 
-		DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f) *
+	DirectX::XMMATRIX transform =
 		DirectX::XMMatrixRotationRollPitchYaw(0.0f, 3.14159f, 0.0f) *
-		DirectX::XMMatrixTranslation(position.x, position.y, position.z) *
-		DirectX::XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
+		DirectX::XMMatrixTranslation(position.x, position.y, position.z);
 	
 	DrawPlane(transform, color, difftexture, normaltex);
 }
@@ -434,10 +456,17 @@ void Terra::Renderer3D::DrawPlane(DirectX::XMMATRIX& transform, DirectX::XMFLOAT
 	plane->constantBuffers.insert({ "PCB" + std::to_string(planeID), UniformBuffer::Create(&plane->material, sizeof(plane->material), 1u,
 		Terra::UniformBuffer::ConstantBufferType::Pixel) });
 
+
+
 	if (difftexture)
 		plane->textures.insert({ "diffuse" + std::to_string(planeID), difftexture });
 	if (normaltex)
+	{
 		plane->textures.insert({ "normal" + std::to_string(planeID), normaltex });
+		plane->constantBuffers.insert({ "PTCB" + std::to_string(planeID), UniformBuffer::Create(&modelViewMat, sizeof(modelViewMat), 2u,
+		Terra::UniformBuffer::ConstantBufferType::Pixel) });
+
+	}
 
 
 	s_FrameData.PlaneCount++;
