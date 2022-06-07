@@ -28,24 +28,33 @@ cbuffer TransformCbuf
 };
 
 Texture2D tex;
-Texture2D normalMap;
+Texture2D normalMap : register(t2);     // register 1 reserved for specmap
 
 SamplerState splr;
 
 
-float4 main(float3 worldPos : Position, float3 n : Normal, float2 tc : Texcoord) : SV_TARGET
+float4 main(float3 viewPos : Position, float3 n : Normal, float3 tan : Tangent, float3 bitan : Bitangent, float2 tc : Texcoord) : SV_TARGET
 {
     if (hasNormalMap)
     {
+        // build the tranform (rotation) into tangent space
+        const float3x3 tanToView = float3x3(
+            normalize(tan),
+            normalize(bitan),
+            normalize(n)
+        );
         const float3 normalSample = normalMap.Sample(splr, tc).xyz;
-        n.x = normalSample.x * 2.0f - 1.0f;     // 0.0 to 1.0 convert to a range of -1.0 to 1.0
-        n.y = -normalSample.y * 2.0f + 1.0f;    // negated since hlsl has +y going down y axis
-        n.z = normalSample.z;                  // negated since -z points toward the camera
-        n = mul(n, (float3x3) modelView);       // only 3x3 since you dont want to translate normals, only rotate them
+        n = normalSample * 2.0f - 1.0f; // convert 0.0 to 1.0 range to a range of -1.0 to 1.0
+        n.y = -n.y; // negated since hlsl has +y going down y axis
+        //n.x = normalSample.x;
+        //n.z = normalSample.z * 2.0f - 1.0f;    // -z points toward the camera
+        //n.z = normalSample.z;
+        //n = mul(n, (float3x3) modelView);       // only 3x3 since you dont want to translate normals, only rotate them
+        n = mul(n, tanToView);
     }
     
     // fragment to light vector data
-    const float3 vToL = lightPos - worldPos; // vector to light
+    const float3 vToL = lightPos - viewPos; // vector to light
     const float3 distToL = length(vToL); // magnitude of above
     const float3 dirToL = vToL / distToL; // normalized vector to light
 
@@ -63,7 +72,7 @@ float4 main(float3 worldPos : Position, float3 n : Normal, float2 tc : Texcoord)
     // calculate specular intensity based on angle between viewing vector and reflection vector, 
     // narrow with power function
     const float3 specular = att * (diffuseColor * diffuseIntensity) * specularIntensity *
-    pow(max(0.0f, dot(normalize(-r), normalize(worldPos))), specularPower);
+    pow(max(0.0f, dot(normalize(-r), normalize(viewPos))), specularPower);
 
     // final color
 #ifdef USECOLOR

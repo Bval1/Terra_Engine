@@ -25,10 +25,10 @@ Texture2D tex;
 SamplerState splr;
 
 
-float4 main(float3 worldPos : Position, float3 n : Normal, float2 tc : Texcoord) : SV_TARGET
+float4 main(float3 viewPos : Position, float3 n : Normal, float2 tc : Texcoord) : SV_TARGET
 {
     // fragment to light vector data
-    const float3 vToL = lightPos - worldPos; // vector to light
+    const float3 vToL = lightPos - viewPos; // vector to light
     const float3 distToL = length(vToL); // magnitude of above
     const float3 dirToL = vToL / distToL; // normalized vector to light
 
@@ -46,7 +46,7 @@ float4 main(float3 worldPos : Position, float3 n : Normal, float2 tc : Texcoord)
     // calculate specular intensity based on angle between viewing vector and reflection vector, 
     // narrow with power function
     const float3 specular = att * (diffuseColor * diffuseIntensity) * specularIntensity *
-    pow(max(0.0f, dot(normalize(-r), normalize(worldPos))), specularPower);
+    pow(max(0.0f, dot(normalize(-r), normalize(viewPos))), specularPower);
 
     // final color
 #ifdef USECOLOR

@@ -20,12 +20,15 @@ namespace Terra {
 		
 		Ref<VertexBuffer> NoTexVertexBuffer;	// these meshes have no uv coordinates defined
 		Ref<VertexBuffer> TexVertexBuffer;
+		Ref<VertexBuffer> MeshVertexBuffer;		// has tangent normals
 		Ref<VertexBuffer> LightVertexBuffer;
 		Ref<VertexArray> VertexArray;
 		
 		Ref<Shader> PhongVS;
 		Ref<Shader> PhongPS;
-		Ref<Shader> NormalMapPhongPS;
+
+		Ref<Shader> NormalMapVS;
+		Ref<Shader> NormalMapPS;
 
 		Ref<Shader> SpecularPhongPS;
 
@@ -69,8 +72,10 @@ void Terra::Renderer3D::Init()
 	s_FrameData.VertexArray = VertexArray::Create();
 	s_FrameData.PhongVS = Shader::Create(L"assets/shaders/D3D11/output/PhongVS.cso", Terra::ShaderType::Vertex);
 	s_FrameData.PhongPS = Shader::Create(L"assets/shaders/D3D11/output/PhongPS.cso", Terra::ShaderType::Pixel);
-	s_FrameData.SpecularPhongPS = Shader::Create(L"assets/shaders/D3D11/output/SpecularPS.cso", Terra::ShaderType::Pixel);
-	s_FrameData.NormalMapPhongPS = Shader::Create(L"assets/shaders/D3D11/output/NormalMapPS.cso", Terra::ShaderType::Pixel);
+	s_FrameData.SpecularPhongPS = Shader::Create(L"assets/shaders/D3D11/output/NormalMapSpecPS.cso", Terra::ShaderType::Pixel);
+
+	s_FrameData.NormalMapVS = Shader::Create(L"assets/shaders/D3D11/output/NormalMapVS.cso", Terra::ShaderType::Vertex);
+	s_FrameData.NormalMapPS = Shader::Create(L"assets/shaders/D3D11/output/NormalMapPS.cso", Terra::ShaderType::Pixel);
 
 	s_FrameData.NoTexPhongVS = Shader::Create(L"assets/shaders/D3D11/output/NoTexVS.cso", Terra::ShaderType::Vertex);
 	s_FrameData.NoTexPhongPS = Shader::Create(L"assets/shaders/D3D11/output/NoTexPS.cso", Terra::ShaderType::Pixel);
@@ -115,7 +120,18 @@ void Terra::Renderer3D::Init()
 	layout_textured.SetVertexShader(s_FrameData.PhongVS);
 	s_FrameData.TexVertexBuffer->SetLayout(layout_textured);
 	
-	
+	// Tangent Normal Mapped Models
+	s_FrameData.MeshVertexBuffer = VertexBuffer::Create(sizeof(VertexBuffer));
+	BufferLayout layout_normaltan =
+	{
+		{"Position", 0, Terra::ShaderDataType::Float3, 0, 0, 0, 0},
+		{"Normal", 0, Terra::ShaderDataType::Float3, 0, 12, 0, 0},
+		{"Tangent", 0, Terra::ShaderDataType::Float3, 0, 24, 0, 0},
+		{"BiTangent", 0, Terra::ShaderDataType::Float3, 0, 36, 0, 0},
+		{"TexCoord", 0, Terra::ShaderDataType::Float2, 0, 48, 0, 0}
+	};
+	layout_normaltan.SetVertexShader(s_FrameData.NormalMapVS);
+	s_FrameData.MeshVertexBuffer->SetLayout(layout_normaltan);
 	s_FrameData.WhiteTexture = Texture2D::Create(1u, 1u);
 }
 
@@ -208,7 +224,7 @@ void Terra::Renderer3D::Flush()
 	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexVertexBuffer);
 	s_FrameData.VertexArray->SetIndexBuffer(s_FrameData.Plane->GetIndexBuffer());
 	s_FrameData.PhongVS->Bind();
-	s_FrameData.NormalMapPhongPS->Bind();
+	s_FrameData.NormalMapPS->Bind();
 	s_FrameData.VertexArray->Bind();
 
 	const auto& texMap = s_FrameData.Plane->textures;
@@ -266,8 +282,10 @@ void Terra::Renderer3D::Flush()
 
 void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular)
 {
-	s_FrameData.TexVertexBuffer->SetData(mesh->VertexData(), mesh->VertexDataSize());
-	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexVertexBuffer);
+	//s_FrameData.TexVertexBuffer->SetData(mesh->VertexData(), mesh->VertexDataSize());
+	//s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexVertexBuffer);
+	s_FrameData.MeshVertexBuffer->SetData(mesh->VertexData(), mesh->VertexDataSize());
+	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.MeshVertexBuffer);
 	s_FrameData.VertexArray->SetIndexBuffer(mesh->GetIndexBuffer());
 	for (const auto& tex : mesh->textures)
 	{
@@ -276,12 +294,12 @@ void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular)
 			tex->Bind();
 		}
 	}
-
-	s_FrameData.PhongVS->Bind();
+	s_FrameData.NormalMapVS->Bind();
+	//s_FrameData.PhongVS->Bind();
 	
 	if (!hasSpecular)
 	{
-		s_FrameData.NormalMapPhongPS->Bind();
+		s_FrameData.NormalMapPS->Bind();
 		//s_FrameData.PhongPS->Bind();
 	}
 	else
@@ -298,6 +316,7 @@ void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular)
 		mesh->PixelCB->Bind();
 		mesh->PixelCB2->Bind();
 	}
+
 
 	RenderCommand::DrawIndexed(s_FrameData.VertexArray); 
 }

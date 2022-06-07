@@ -21,8 +21,9 @@
     <FxCompile Include="assets\shaders\D3D11\NoTexPS.hlsl" />
     <FxCompile Include="assets\shaders\D3D11\NoTexVS.hlsl" />
     <FxCompile Include="assets\shaders\D3D11\VS.hlsl" />
-    <FxCompile Include="assets\shaders\D3D11\SpecularPS.hlsl" />
+    <FxCompile Include="assets\shaders\D3D11\NormalMapSpecPS.hlsl" />
     <FxCompile Include="assets\shaders\D3D11\NormalMapPS.hlsl" />
+    <FxCompile Include="assets\shaders\D3D11\NormalMapVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SandboxApp.cpp">

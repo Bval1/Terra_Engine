@@ -18,10 +18,10 @@ cbuffer ObjectCBuf  // set per object for each object rendered, use slot 1
     float padding[2];
 };
 
-float4 main(float3 worldPos : Position, float3 n : Normal) : SV_TARGET
+float4 main(float3 viewPos : Position, float3 n : Normal) : SV_TARGET
 {
 
-    const float3 vToL = lightPos - worldPos;  // vector to light
+    const float3 vToL = lightPos - viewPos; // vector to light
     const float distToL = length(vToL);     // magnitude of above
     const float dirToL = vToL / distToL;    // normalized vector to light
 	
@@ -40,7 +40,7 @@ float4 main(float3 worldPos : Position, float3 n : Normal) : SV_TARGET
 	// compare that reflection to the vector from the camera to the pixel to see 
 	// how much its pointing in the direction of the camera using the dot product with pow
     const float3 specular = att * (diffuseColor * diffuseIntensity) * specularIntensity *
-    pow( max( 0.0f, dot(normalize(-r), normalize(worldPos)) ), specularPower);
+    pow(max(0.0f, dot(normalize(-r), normalize(viewPos))), specularPower);
    
     const float3 color = { materialColor.r, materialColor.g, materialColor.b };
     return float4(saturate((diffuse + ambient) * color + specular), 1.0f); // final color

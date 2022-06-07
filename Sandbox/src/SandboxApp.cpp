@@ -79,7 +79,7 @@ public:
 		//Terra::Renderer3D::DrawMesh("assets\\models\\shinebox_logo\\shinebox.obj", transform1, materialConstants.color);
 		Terra::Renderer3D::DrawMesh("assets\\models\\nano_textured\\nanosuit.obj", transform2, {});
 		//Terra::Renderer3D::DrawCube(transform1, meshcolor, mLogoTexture);
-		Terra::Renderer3D::DrawPlane(transform3, c, m_Texture, m_NormalTex);
+		//Terra::Renderer3D::DrawPlane(transform3, c, m_Texture, m_NormalTex);
 		//Terra::Renderer3D::DrawPlane(pos2, c, m_TilesTex);
 		//Terra::Renderer3D::DrawSphere({ 4.0, -2.0f, 0.0f }, meshcolor);
 		Terra::Renderer3D::EndScene();

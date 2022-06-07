@@ -5,8 +5,8 @@ Terra::Mesh Terra::Mesh::Create(const std::string& path)
 {
 	TERRA_PROFILE_FUNCTION();
 	Assimp::Importer imp;
-	auto pModel = imp.ReadFile(path.c_str(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_ConvertToLeftHanded |
-		aiProcess_GenNormals);
+	auto pModel = imp.ReadFile(path.c_str(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices 
+		| aiProcess_ConvertToLeftHanded |aiProcess_GenNormals | aiProcess_CalcTangentSpace);
 
 
 	TERRA_ASSERT(pModel, imp.GetErrorString());
@@ -39,6 +39,8 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 	{
 		DirectX::XMFLOAT3 pos;
 		DirectX::XMFLOAT3 n;
+		DirectX::XMFLOAT3 tan;
+		DirectX::XMFLOAT3 bitan;
 		DirectX::XMFLOAT2 uv;
 	};
 
@@ -49,6 +51,8 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 		{
 			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh->mVertices[i]),
 			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh->mNormals[i]),
+			* reinterpret_cast<DirectX::XMFLOAT3*>(&mesh->mTangents[i]),
+			* reinterpret_cast<DirectX::XMFLOAT3*>(&mesh->mBitangents[i]),
 			*reinterpret_cast<DirectX::XMFLOAT2*>(&mesh->mTextureCoords[0][i])
 		};
 	}
@@ -96,6 +100,9 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 		{
 			material.Get(AI_MATKEY_SHININESS, shine);  // uses this value when no spec map is present
 		}
+
+		if (material.GetTexture(aiTextureType_NORMALS, 0, &texFileName) == aiReturn_SUCCESS)
+			textures.emplace_back(CreateRef<DirectXTexture2D>(basePath + texFileName.C_Str(), 2u));
 	}
 	else
 	{
