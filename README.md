@@ -1,1 +1,1 @@
-Terra_Engine
+A basic graphics engine built with Direct3D 11.  Capable of rendering .obj models and loading materials.  Includes a sandbox application to showcase a demo model. Windows only.  Planning to do a Vulkan port later on.
