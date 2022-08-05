@@ -72,6 +72,7 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 	DirectX::XMFLOAT4 meshColor = DirectX::XMFLOAT4(1.f, 1.f, 1.f, 1.f);
 	float shine = 25.0f;
 	bool hasSpecular = false;
+	bool hasNormalMap = false;
 	if (mesh->mMaterialIndex >= 0)
 	{
 		auto& material = *pMaterials[mesh->mMaterialIndex];
@@ -91,18 +92,27 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 			textures.emplace_back(CreateRef<DirectXTexture2D>(1u, 1u));
 		}
 
+
+		if (material.GetTexture(aiTextureType_NORMALS, 0, &texFileName) == aiReturn_SUCCESS)
+		{
+			textures.emplace_back(CreateRef<DirectXTexture2D>(basePath + texFileName.C_Str(), 1u));
+			hasNormalMap = true;
+		}
+		else
+		{
+			hasNormalMap = false;
+		}
+
 		if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS)
 		{
 			hasSpecular = true;
-			textures.emplace_back(CreateRef<DirectXTexture2D>(basePath + texFileName.C_Str(), 1u));
+			textures.emplace_back(CreateRef<DirectXTexture2D>(basePath + texFileName.C_Str(), 2u));
 		}
 		else
 		{
 			material.Get(AI_MATKEY_SHININESS, shine);  // uses this value when no spec map is present
 		}
 
-		if (material.GetTexture(aiTextureType_NORMALS, 0, &texFileName) == aiReturn_SUCCESS)
-			textures.emplace_back(CreateRef<DirectXTexture2D>(basePath + texFileName.C_Str(), 2u));
 	}
 	else
 	{
@@ -113,5 +123,5 @@ Terra::Ref<Terra::Mesh> Terra::Mesh::ParseMesh(const std::string& basePath, cons
 
 	
 	return Terra::CreateRef<Mesh>(vertices.data(), numofElements * vertices.size(), indices.data(),
-		indices.size(), textures, meshColor, shine, hasSpecular);
+		indices.size(), textures, meshColor, shine, hasSpecular, hasNormalMap);
 }

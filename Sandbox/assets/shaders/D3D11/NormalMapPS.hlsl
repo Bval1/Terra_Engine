@@ -21,14 +21,14 @@ cbuffer ObjectCBuf  // set per object for each object rendered, use slot 1
     float padding[1];
 };
 
-cbuffer TransformCbuf
-{
-    matrix modelView;
-    matrix modelViewProj;
-};
+//cbuffer TransformCbuf
+//{
+//    matrix modelView;
+//    matrix modelViewProj;
+//};
 
 Texture2D tex;
-Texture2D normalMap : register(t2);     // register 1 reserved for specmap
+Texture2D normalMap;     
 
 SamplerState splr;
 

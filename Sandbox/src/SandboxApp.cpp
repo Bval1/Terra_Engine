@@ -58,13 +58,13 @@ public:
 
 		auto transform1 =
 			DirectX::XMMatrixScaling(2 * m_scale.x, 2 * m_scale.y, m_scale.z) *
-			DirectX::XMMatrixRotationRollPitchYaw(m_rot.x, 3.14 + m_rot.y, m_rot.z) *
-			DirectX::XMMatrixTranslation(m_pos.x + 2, m_pos.y + 2, m_pos.z);
+			DirectX::XMMatrixRotationRollPitchYaw(m_rot.x, m_rot.y, m_rot.z) *
+			DirectX::XMMatrixTranslation(m_pos.x + 5, m_pos.y + 10, m_pos.z);
 
 
 		auto transform2 =
 			DirectX::XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z) *
-			DirectX::XMMatrixRotationRollPitchYaw(m_rot.x, m_rot.y, m_rot.z) *
+			DirectX::XMMatrixRotationRollPitchYaw(m_rot.x, m_rot.z, m_rot.z) *
 			DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z);
 
 		auto transform3 =
@@ -75,9 +75,10 @@ public:
 		auto meshcolor = materialConstants.color;
 		DirectX::XMFLOAT4 c = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-		Terra::Renderer3D::DrawPointLight(m_lightpos);
+		Terra::Renderer3D::DrawPointLight(pointLight);
 		//Terra::Renderer3D::DrawMesh("assets\\models\\shinebox_logo\\shinebox.obj", transform1, materialConstants.color);
 		Terra::Renderer3D::DrawMesh("assets\\models\\nano_textured\\nanosuit.obj", transform2, {});
+		//Terra::Renderer3D::DrawMesh("assets\\models\\brick_wall\\brick_wall.obj", transform1, {});
 		//Terra::Renderer3D::DrawCube(transform1, meshcolor, mLogoTexture);
 		//Terra::Renderer3D::DrawPlane(transform3, c, m_Texture, m_NormalTex);
 		//Terra::Renderer3D::DrawPlane(pos2, c, m_TilesTex);
@@ -96,7 +97,6 @@ public:
 		ImGui::SliderAngle("X Rotation", &m_rot.x); 
 		ImGui::SliderAngle("Y Rotation", &m_rot.y);
 		ImGui::SliderAngle("Z Rotation", &m_rot.z);
-		ImGui::DragFloat3("Light Position", &m_lightpos.x, 0.1f, -100.0f, 100.0f);
 		ImGui::End();
 
 		pointLight.RenderControlWindow();

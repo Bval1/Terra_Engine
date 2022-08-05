@@ -46,7 +46,8 @@ namespace Terra {
 		//DirectX::XMFLOAT4 color;
 		float specularIntensity = 0.8f;
 		float specularPower = 30.0f;
-		float padding[2];
+		int hasNormalMap = 0;
+		float padding[1];
 	} material;
 
 	struct ModelViewMat
@@ -220,35 +221,39 @@ void Terra::Renderer3D::Flush()
 		}
 	}
 	// Plane
-	s_FrameData.TexVertexBuffer->SetData(s_FrameData.Plane->VertexData(), s_FrameData.Plane->VertexDataSize());
-	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexVertexBuffer);
-	s_FrameData.VertexArray->SetIndexBuffer(s_FrameData.Plane->GetIndexBuffer());
-	s_FrameData.PhongVS->Bind();
-	s_FrameData.NormalMapPS->Bind();
-	s_FrameData.VertexArray->Bind();
-
-	const auto& texMap = s_FrameData.Plane->textures;
-	for (size_t i = 0; i < s_FrameData.PlaneCount; i++)
+	if (s_FrameData.PlaneCount)
 	{
 
-		if (texMap.empty())
+		s_FrameData.TexVertexBuffer->SetData(s_FrameData.Plane->VertexData(), s_FrameData.Plane->VertexDataSize());
+		s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexVertexBuffer);
+		s_FrameData.VertexArray->SetIndexBuffer(s_FrameData.Plane->GetIndexBuffer());
+		s_FrameData.PhongVS->Bind();
+		s_FrameData.NormalMapPS->Bind();
+		s_FrameData.VertexArray->Bind();
+
+		const auto& texMap = s_FrameData.Plane->textures;
+		for (size_t i = 0; i < s_FrameData.PlaneCount; i++)
 		{
-			s_FrameData.WhiteTexture->Bind();
-		}
-		else
-		{
-			texMap.at("diffuse" + std::to_string(i))->Bind();
-			if (texMap.find("normal" + std::to_string(i)) != texMap.end())
+
+			if (texMap.empty())
 			{
-				texMap.at("normal" + std::to_string(i))->Bind();
-				s_FrameData.Plane->constantBuffers.at("PTCB" + std::to_string(i))->Bind();	// Pixel transform cbuf needed for correct normal mapping
+				s_FrameData.WhiteTexture->Bind();
 			}
-		}
+			else
+			{
+				texMap.at("diffuse" + std::to_string(i))->Bind();
+				if (texMap.find("normal" + std::to_string(i)) != texMap.end())
+				{
+					texMap.at("normal" + std::to_string(i))->Bind();
+					s_FrameData.Plane->constantBuffers.at("PTCB" + std::to_string(i))->Bind();	// Pixel transform cbuf needed for correct normal mapping
+				}
+			}
 	
-		s_FrameData.Plane->constantBuffers.at("TCB" + std::to_string(i))->Bind();
-		s_FrameData.Plane->constantBuffers.at("PCB" + std::to_string(i))->Bind();
+			s_FrameData.Plane->constantBuffers.at("TCB" + std::to_string(i))->Bind();
+			s_FrameData.Plane->constantBuffers.at("PCB" + std::to_string(i))->Bind();
 		
-		RenderCommand::DrawIndexed(s_FrameData.VertexArray);
+			RenderCommand::DrawIndexed(s_FrameData.VertexArray);
+		}
 	}
 
 	// Custom Meshes
@@ -256,7 +261,7 @@ void Terra::Renderer3D::Flush()
 	{		
 		for (auto& childMesh : meshBase->GetChildMeshes())
 		{
-			FlushMesh(childMesh, childMesh->hasSpecular);
+			FlushMesh(childMesh);
 		}
 	}
 	
@@ -280,10 +285,8 @@ void Terra::Renderer3D::Flush()
 	}
 }
 
-void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular)
+void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh)
 {
-	//s_FrameData.TexVertexBuffer->SetData(mesh->VertexData(), mesh->VertexDataSize());
-	//s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.TexVertexBuffer);
 	s_FrameData.MeshVertexBuffer->SetData(mesh->VertexData(), mesh->VertexDataSize());
 	s_FrameData.VertexArray->AddVertexBuffer(s_FrameData.MeshVertexBuffer);
 	s_FrameData.VertexArray->SetIndexBuffer(mesh->GetIndexBuffer());
@@ -294,59 +297,54 @@ void Terra::Renderer3D::FlushMesh(const Ref<Mesh>& mesh, bool hasSpecular)
 			tex->Bind();
 		}
 	}
+
 	s_FrameData.NormalMapVS->Bind();
 	//s_FrameData.PhongVS->Bind();
-	
+
+	bool hasSpecular = mesh->hasSpecular;
 	if (!hasSpecular)
 	{
 		s_FrameData.NormalMapPS->Bind();
-		//s_FrameData.PhongPS->Bind();
+
+		// Uses a pixel shader that takes in a another constant buffer with spec info
+		mesh->PixelCB->Bind();
+		//mesh->PixelCB2->Bind();
 	}
 	else
 		s_FrameData.SpecularPhongPS->Bind();
 
 	s_FrameData.VertexArray->Bind();
-
 	mesh->VertexCB->Bind();
-
-	
-	// Uses a pixel shader that takes in a pCB
-	if (!hasSpecular)
-	{
-		mesh->PixelCB->Bind();
-		mesh->PixelCB2->Bind();
-	}
-
 
 	RenderCommand::DrawIndexed(s_FrameData.VertexArray); 
 }
 
 
+
+void Terra::Renderer3D::DrawPointLight(PointLight& light)
+{
+	s_FrameData.Light->Update(light.m_pos, light.m_scale, light.m_diffuseColor, light.m_diffuseIntensity);
+	DrawPointLight();
+}
+
+void Terra::Renderer3D::DrawPointLight(DirectX::XMFLOAT3& pos)
+{
+	s_FrameData.Light->SetPosition(pos);
+	DrawPointLight();
+}
+
 void Terra::Renderer3D::DrawPointLight(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT4& diffusecolor)
 {
 	auto& pointlight = s_FrameData.Light;
 	pointlight->SetPosition(pos);
-	const auto& modelView = pointlight->GetTransformMatrix() * cameraData.ViewMatrix;
-	modelViewMat =
-	{
-		DirectX::XMMatrixTranspose(modelView),
-		DirectX::XMMatrixTranspose(modelView * cameraData.ViewProjection)
-	};
-
-	pointlight->constantBuffers.insert({ "TCB", UniformBuffer::Create(&modelViewMat, sizeof(ModelViewMat), 0u,
-		Terra::UniformBuffer::ConstantBufferType::Vertex) });
-
 	pointlight->SetDiffuseColor(diffusecolor);
-
-	pointlight->constantBuffers.insert({ "PCB", UniformBuffer::Create(&diffusecolor, sizeof(diffusecolor), 1u,
-		Terra::UniformBuffer::ConstantBufferType::Pixel) });
+	DrawPointLight();
 }
 
 
-void Terra::Renderer3D::DrawPointLight(DirectX::XMFLOAT3& pos)
+void Terra::Renderer3D::DrawPointLight()
 {
 	auto& pointlight = s_FrameData.Light;
-	pointlight->SetPosition(pos);
 	const auto& modelView = pointlight->GetTransformMatrix() * cameraData.ViewMatrix;
 	modelViewMat =
 	{
@@ -356,7 +354,7 @@ void Terra::Renderer3D::DrawPointLight(DirectX::XMFLOAT3& pos)
 
 	pointlight->constantBuffers.insert({ "TCB", UniformBuffer::Create(&modelViewMat, sizeof(ModelViewMat), 0u,
 		Terra::UniformBuffer::ConstantBufferType::Vertex) });
-	
+
 	// bind to slot 1 so it doesn't override lightcbuf in other pixel shaders
 	const auto colordata = pointlight->GetDiffuseColor();
 	pointlight->constantBuffers.insert({ "PCB", UniformBuffer::Create(&colordata, sizeof(colordata), 1u,
@@ -387,11 +385,14 @@ void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& tra
 
 	for (auto& childMesh : meshBase->GetChildMeshes())
 	{
+		
+		material.hasNormalMap = childMesh->hasNormalMap;
 		childMesh->VertexCB = meshBase->VertexCB;  // TODO: do built up transform here
+		
 		if (!childMesh->hasSpecular)  // only use this material when no spec map is present 
 		{
-			//material.color = color.has_value() ? color.value() : childMesh->color;
 			material.specularPower = childMesh->specularPower;
+			//material.color = color.has_value() ? color.value() : childMesh->color;
 			if (!childMesh->PixelCB)
 			{
 				
@@ -403,14 +404,15 @@ void Terra::Renderer3D::DrawMesh(const std::string& path, DirectX::XMMATRIX& tra
 			}
 		}
 
-		if (!childMesh->PixelCB2)
-		{
-			childMesh->PixelCB2 = UniformBuffer::Create(&modelViewMat, sizeof(ModelViewMat), 2u, Terra::UniformBuffer::ConstantBufferType::Pixel);
-		}
-		else
-		{
-			childMesh->PixelCB2->Update(&modelView, sizeof(ModelViewMat));
-		}
+		// needed for object space normal mapping
+		//if (!childMesh->PixelCB2)
+		//{
+		//	childMesh->PixelCB2 = UniformBuffer::Create(&modelViewMat, sizeof(ModelViewMat), 2u, Terra::UniformBuffer::ConstantBufferType::Pixel);
+		//}
+		//else
+		//{
+		//	childMesh->PixelCB2->Update(&modelView, sizeof(ModelViewMat));
+		//}
 	
 	}
 	s_FrameData.MeshCount++;

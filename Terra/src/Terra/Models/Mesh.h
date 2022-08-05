@@ -13,7 +13,7 @@ namespace Terra {
 		Mesh() = default;
 
 		Mesh(void* vertices, uint32_t vertexElementCount, uint32_t* indices, uint32_t indexCount, std::vector<Ref<Texture2D>> texs,
-			DirectX::XMFLOAT4 matColor = { 1.f , 1.f, 1.f, 1.f }, float specular = 0.0f,  bool hasSpec = 0)
+			DirectX::XMFLOAT4 matColor = { 1.f , 1.f, 1.f, 1.f }, float specular = 0.0f,  bool hasSpec = 0, bool hasNMap = 0)
 		{
 			m_indexBuffer = IndexBuffer::Create(indices, indexCount);
 
@@ -25,6 +25,7 @@ namespace Terra {
 			color = matColor;
 			specularPower = specular;
 			hasSpecular = hasSpec;	
+			hasNormalMap = hasNMap;
 		
 		}
 
@@ -57,6 +58,7 @@ namespace Terra {
 		Ref<UniformBuffer> PixelCB2;
 		float specularPower = 0.0f;
 		bool hasSpecular = false;
+		bool hasNormalMap = false;
 	
 	protected:
 		float* m_vertexData;

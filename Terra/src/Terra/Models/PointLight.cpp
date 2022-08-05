@@ -69,9 +69,17 @@ DirectX::XMMATRIX Terra::PointLight::GetTransformMatrix() const
 		);
 }
 
+void Terra::PointLight::Update(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& scale, DirectX::XMFLOAT3& diffuseColor, float diffuseIntensity)
+{
+	m_pos = pos;
+	m_scale = scale;
+	m_diffuseColor = diffuseColor;
+	m_diffuseIntensity = diffuseIntensity;
+}
+
 void Terra::PointLight::ResetData()
 {
-	m_pos = { 0.0f, 0.0f, 4.0f };
+	m_pos = { 0.0f, 15.5f, -3.0f };
 	m_scale = { 0.5f, 0.5f, 0.5f };
 	m_rot = { 0.0f, 0.0f, 0.0f };
 	m_ambient = { 0.1f, 0.1f, 0.1f };

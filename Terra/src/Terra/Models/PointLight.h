@@ -6,6 +6,8 @@ namespace Terra {
 	class PointLight : public Sphere
 	{
 	public:
+		struct PointLightCBuf;
+
 		PointLight();
 		~PointLight();
 			
@@ -22,9 +24,22 @@ namespace Terra {
 			m_diffuseColor = { diffusecolor.x, diffusecolor.y, diffusecolor.z };
 		}
 
+		void Update(DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& scale, DirectX::XMFLOAT3& diffuseColor, float diffuseIntensity);
+
 	private:
 		void ResetData();
 
+		
+	public:
+		DirectX::XMFLOAT3 m_ambient = { 0.05f, 0.05f, 0.05f };
+		DirectX::XMFLOAT3 m_diffuseColor = { 1.0f, 1.0f, 1.0f };
+		float m_diffuseIntensity = 1.0f, m_attConstant = 1.0f, m_attLinear = 0.045f, m_attQuadratic = 0.0075f;
+		
+		DirectX::XMFLOAT3 m_pos = { 0.0f, 0.0f, 4.0f };
+		DirectX::XMFLOAT3 m_scale = { 0.5f, 0.5f, 0.5f };
+		DirectX::XMFLOAT3 m_rot = { 0.0f, 3.14159f, 0.0f };
+		float m_roll = 0.0f, m_pitch = 0.0f, m_yaw = 0.0f;
+	
 	private:
 		struct PointLightCBuf
 		{
@@ -40,16 +55,6 @@ namespace Terra {
 		
 		Ref<UniformBuffer> m_pointLightCBuf;
 		Ref<UniformBuffer> m_materialCBuf;
-
-
-		DirectX::XMFLOAT3 m_ambient = { 0.05f, 0.05f, 0.05f };
-		DirectX::XMFLOAT3 m_diffuseColor = { 1.0f, 1.0f, 1.0f };
-		float m_diffuseIntensity = 1.0f, m_attConstant = 1.0f, m_attLinear = 0.045f, m_attQuadratic = 0.0075f;
-
-		DirectX::XMFLOAT3 m_pos = { 0.0f, 0.0f, 4.0f };
-		DirectX::XMFLOAT3 m_scale = { 0.5f, 0.5f, 0.5f };
-		DirectX::XMFLOAT3 m_rot = { 0.0f, 3.14159f, 0.0f };
-		float m_roll = 0.0f, m_pitch = 0.0f, m_yaw = 0.0f;
 
 	};
 }

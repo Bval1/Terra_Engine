@@ -5,8 +5,9 @@
 
 #include <imgui.h>
 #include <numbers>
-namespace DX = DirectX;
 
+#define BLENDER_CONTROLS
+namespace DX = DirectX;
 
 // directxmath  load and store functions:
 //https://docs.microsoft.com/en-us/windows/win32/dxmath/ovw-xnamath-reference-functions-load
@@ -31,7 +32,7 @@ void Terra::PerspectiveCamera::OnUpdate(Timestep ts)
 	deltafloat.y *= mouseSpeedFactor;
 
 
-#ifdef BLENDER
+#ifdef BLENDER_CONTROLS
 	if (Input::IsKeyPressed(TERRA_KEY_LEFT_SHIFT))	// Blender controls
 	{
 		if (Input::IsMouseButtonPressed(TERRA_MOUSE_BUTTON_MIDDLE))
@@ -181,7 +182,7 @@ float Terra::PerspectiveCamera::ZoomSpeed() const
 	float distance = m_position.z * 0.1f;
 	distance = std::max(distance, 0.0f);
 	float speed = distance * distance;
-	speed = std::min(speed, 100.0f); // max speed = 100
+	speed = std::min(speed, 100.0f);	// max speed = 100
 	return speed;
 }
 

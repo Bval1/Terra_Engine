@@ -10,8 +10,8 @@ cbuffer LightCBuf
 };
 
 Texture2D tex;
-Texture2D spec;
 Texture2D normalMap;
+Texture2D spec;
 SamplerState splr;
 
 
@@ -19,8 +19,8 @@ float4 main(float3 viewPos : Position, float3 n : Normal, float3 tan : Tangent, 
 {
     const float3x3 tanToView = float3x3(normalize(tan), normalize(bitan), normalize(n));
     const float3 normalSample = normalMap.Sample(splr, tc).xyz;
-    n = normalSample * 2.0f - 1.0f;
-        // bring normal from tanspace into view space
+    n = normalSample * 2.0f - 1.0f;  // bring normal from tanspace into view space
+    n.y = -n.y;
     n = mul(n, tanToView);
     
     // fragment to light vector data
