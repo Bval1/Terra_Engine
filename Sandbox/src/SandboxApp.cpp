@@ -97,6 +97,13 @@ public:
 		ImGui::SliderAngle("X Rotation", &m_rot.x); 
 		ImGui::SliderAngle("Y Rotation", &m_rot.y);
 		ImGui::SliderAngle("Z Rotation", &m_rot.z);
+		if (ImGui::Button("Reset"))
+		{
+			m_pos = { 0.0f, 0.0f, 0.0f };
+			m_scale = { 1.0f, 1.0f, 1.0f };
+			m_rot = { 0.0f, 0.0f, 0.0f };
+			m_roll = 0.0f, m_pitch = 0.0f, m_yaw = 0.0f;
+		}
 		ImGui::End();
 
 		pointLight.RenderControlWindow();
